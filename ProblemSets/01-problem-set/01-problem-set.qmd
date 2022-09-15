@@ -190,8 +190,18 @@ top_ten_boys_names <- babynames %>%
   filter(sex=="M") %>% 
   count(name, wt = n) %>% #"wt" keeps tally of n for distinct name
   arrange(desc(n)) %>% 
-  head(n=5)
-top_ten_boys_names
+  head(n=5) %>% 
+  select(name) %>% 
+  pull()
+
+top_ten_girls_names <- babynames %>% 
+  group_by(name) %>% 
+  filter(sex=="F") %>% 
+  count(name, wt = n) %>%
+  arrange(desc(n)) %>% 
+  head(n=5) %>% 
+  select(name) %>% 
+  pull()
 ```
 
 ### Part B
@@ -202,7 +212,9 @@ Now make two `line`graphs of these 5 names over time, one for boys, and one for 
 
 ```{r 6-b}
 # write your code here! 
-
+babynames %>% 
+  filter(name %in% top_ten_boys_names) %>% 
+  filter(sex=="M")
 ```
 
 ------------------------------------------------------------------------
