@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.649">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sam Turner">
+<meta name="dcterms.date" content="2022-09-21">
+
+<title>Problem Set 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="01-problem-set_files/libs/clipboard/clipboard.min.js"></script>
+<script src="01-problem-set_files/libs/quarto-html/quarto.js"></script>
+<script src="01-problem-set_files/libs/quarto-html/popper.min.js"></script>
+<script src="01-problem-set_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="01-problem-set_files/libs/quarto-html/anchor.min.js"></script>
+<link href="01-problem-set_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="01-problem-set_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="01-problem-set_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="01-problem-set_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="01-problem-set_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Problem Set 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sam Turner </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 21, 2022</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="the-popularity-of-baby-names" class="level1">
+<h1>The Popularity of Baby Names</h1>
+<p>Install and load the package <code>babynames</code>. Get help for <code>?babynames</code> to see what the data includes. <strong>Also, don’t forget to load <code>tidyverse</code></strong>!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("babynames")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(babynames)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.8     ✔ dplyr   1.0.9
+✔ tidyr   1.2.0     ✔ stringr 1.4.1
+✔ readr   2.1.2     ✔ forcats 0.5.2
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>babynames</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,924,665 × 5
+    year sex   name          n   prop
+   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;dbl&gt;
+ 1  1880 F     Mary       7065 0.0724
+ 2  1880 F     Anna       2604 0.0267
+ 3  1880 F     Emma       2003 0.0205
+ 4  1880 F     Elizabeth  1939 0.0199
+ 5  1880 F     Minnie     1746 0.0179
+ 6  1880 F     Margaret   1578 0.0162
+ 7  1880 F     Ida        1472 0.0151
+ 8  1880 F     Alice      1414 0.0145
+ 9  1880 F     Bertha     1320 0.0135
+10  1880 F     Sarah      1288 0.0132
+# … with 1,924,655 more rows</code></pre>
+</div>
+</div>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1</h2>
+<section id="part-a" class="level3">
+<h3 class="anchored" data-anchor-id="part-a">Part A</h3>
+<p>What are the top 5 boys names for 2017, and what <em>percent</em> (note <em>not</em> the proportion!) of overall names is each?</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>total_boys <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> year <span class="sc">==</span> <span class="dv">2017</span>) <span class="sc">%&gt;%</span> <span class="co">#Querey for sex and the year</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(n) <span class="sc">%&gt;%</span> <span class="co">#Grab the total boy births in a year</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>() <span class="co">#Sum all together to get total amount of boys that year</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>boy_babynames <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> year <span class="sc">==</span> <span class="dv">2017</span>) <span class="sc">%&gt;%</span> <span class="co">#Querey again for sex and year</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percnt =</span> <span class="dv">100</span><span class="sc">*</span>(n <span class="sc">/</span> total_boys)) <span class="sc">%&gt;%</span> <span class="co">#Calculate percentage of boys and assign it to percnt</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percnt)) <span class="co">#Arrange DataFrame in decending order, putting highest first</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The top five boys names for 2017 are as follows:</p>
+<ol type="1">
+<li>Liam with 1.0208832%</li>
+<li>Noah with 0.9989697%</li>
+<li>William with 0.8124329%</li>
+<li>James with 0.7758014%</li>
+<li>Logan with 0.7617376%</li>
+</ol>
+</section>
+<section id="part-b" class="level3">
+<h3 class="anchored" data-anchor-id="part-b">Part B</h3>
+<p>What are the top 5 <em>girls</em> names for 2017, and what <em>percent</em> of overall names is each?</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>total_girls <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="st">"F"</span> <span class="sc">&amp;</span> year <span class="sc">==</span> <span class="dv">2017</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(n) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>girl_babynames <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex <span class="sc">==</span> <span class="st">"F"</span> <span class="sc">&amp;</span> year <span class="sc">==</span> <span class="dv">2017</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percnt =</span> <span class="dv">100</span><span class="sc">*</span>(n <span class="sc">/</span> total_girls)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(percnt))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>babynames</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,924,665 × 5
+    year sex   name          n   prop
+   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;     &lt;int&gt;  &lt;dbl&gt;
+ 1  1880 F     Mary       7065 0.0724
+ 2  1880 F     Anna       2604 0.0267
+ 3  1880 F     Emma       2003 0.0205
+ 4  1880 F     Elizabeth  1939 0.0199
+ 5  1880 F     Minnie     1746 0.0179
+ 6  1880 F     Margaret   1578 0.0162
+ 7  1880 F     Ida        1472 0.0151
+ 8  1880 F     Alice      1414 0.0145
+ 9  1880 F     Bertha     1320 0.0135
+10  1880 F     Sarah      1288 0.0132
+# … with 1,924,655 more rows</code></pre>
+</div>
+</div>
+<p>The top 5 girls names for 2017 are as follows:</p>
+<ol type="1">
+<li>Emma with 1.1530479%</li>
+<li>Olivia with 1.0884379</li>
+<li>Ava with 0.9289577%</li>
+<li>Isabella with 0.8821067%</li>
+<li>Sophia with 0.8663924%</li>
+</ol>
+</section>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2</h2>
+<p>Make two barplots of these top 5 names, one for each sex. Map <code>aes</code>thetics <code>x</code> to <code>name</code> and <code>y</code> to <code>prop</code> [or <code>percent</code>, if you made that variable, as I did.] and use <code>geom_col</code> (since you are declaring a specific <code>y</code>, otherwise you could just use <code>geom_bar()</code> and just an <code>x</code>.)</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> boy_babynames <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))<span class="sc">+</span> <span class="co">#Grab first 5 rows</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x=</span>name,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">y=</span>percnt,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill=</span>name)<span class="sc">+</span> <span class="co">#Use fill to color the graph</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(name, percnt))) <span class="co">#Reorder the bars so that they look nicer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-problem-set_files/figure-html/2a-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> girl_babynames <span class="sc">%&gt;%</span> <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))<span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x=</span>name,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y=</span>percnt,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill=</span>name)<span class="sc">+</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="fu">reorder</span>(name, percnt)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="01-problem-set_files/figure-html/2a-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="question-3" class="level2">
+<h2 class="anchored" data-anchor-id="question-3">Question 3</h2>
+<p>Find your name. [If your name isn’t in there 😟, pick a random name.] <code>count</code> by <code>sex</code> how many babies since 1880 were named your name. [Hint: if you do only this, you’ll get the number of <em>rows</em> (years) there are in the data. You want to add the number of babies in each row (<code>n</code>), so inside <code>count</code>, add <code>, wt = n</code> to weight the count by <code>n</code>.] Also create a variable for the percent of each sex.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>boys_named_sam <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name<span class="sc">==</span><span class="st">"Samuel"</span> <span class="sc">|</span> name<span class="sc">==</span><span class="st">"Sam"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex<span class="sc">==</span><span class="st">"M"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(n) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>()</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>girls_named_sam <span class="ot">&lt;-</span> babynames <span class="sc">%&gt;%</span> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name<span class="sc">==</span><span class="st">"Samuel"</span> <span class="sc">|</span> name<span class="sc">==</span><span class="st">"Sam"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sex<span class="sc">==</span><span class="st">"F"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(n) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>()</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>percnt_boys <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span>(boys_named_sam <span class="sc">/</span> (boys_named_sam <span class="sc">+</span> girls_named_sam))</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>percnt_girls <span class="ot">&lt;-</span> <span class="dv">100</span><span class="sc">*</span>(girls_named_sam <span class="sc">/</span> (boys_named_sam <span class="sc">+</span> girls_named_sam))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Since 1880 there have been 873790 boys named Sam or Samuel. This makes up 99.5159674% of the total number of people named Sam or Samuel. In the same time period there have been 4250 named Sam or Samuel. They make up 0.4840326% of the population of people named Sam or Samuel.</p>
+</section>
+<section id="question-4" class="level2">
+<h2 class="anchored" data-anchor-id="question-4">Question 4</h2>
+<p>Make a line graph of the number of babies with your name over time, <code>color</code>ed by <code>sex</code>.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="question-5" class="level2">
+<h2 class="anchored" data-anchor-id="question-5">Question 5</h2>
+<section id="part-a-1" class="level3">
+<h3 class="anchored" data-anchor-id="part-a-1">Part A</h3>
+<p>Find the most common name for boys by year between 1980-2017. [Hint: you’ll want to first <code>group_by(year)</code>. Once you’ve got all the right conditions, you’ll get a table with a lot of data. You only want to keep just the 1st row of each grouped-year’s data, so add <code>%&gt;% slice(1)</code>.]</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="part-b-1" class="level3">
+<h3 class="anchored" data-anchor-id="part-b-1">Part B</h3>
+<p>Now do the same for girls.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="question-6" class="level2">
+<h2 class="anchored" data-anchor-id="question-6">Question 6</h2>
+<p>Now let’s graph the evolution of the most common names since 1880.</p>
+<section id="part-a-2" class="level3">
+<h3 class="anchored" data-anchor-id="part-a-2">Part A</h3>
+<p>First, find out what are the top 10 <em>overall</em> most popular names for boys and for girls in the data. [Hint: first <code>group_by(name)</code>.] You may want to create two objects, each with these top 5 names as character elements.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="part-b-2" class="level3">
+<h3 class="anchored" data-anchor-id="part-b-2">Part B</h3>
+<p>Now make two <code>line</code>graphs of these 5 names over time, one for boys, and one for girls. [Hint: you’ll first want to subset the data to use for your <code>data</code> layer in the plot. First <code>group_by(year)</code> and also make sure you only use the names you found in Part A. Try using the <code>%in%</code> command to do this.]</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="political-and-economic-freedom-around-the-world" class="level1">
+<h1>Political and Economic Freedom Around the World</h1>
+<p>For the remaining questions, we’ll look at the relationship between Economic Freedom and Political Freedom in countries around the world today. Our data for economic freedom comes from the <a href="https://www.fraserinstitute.org/economic-freedom/dataset?geozone=world&amp;year=2016&amp;page=dataset">Fraser Institute</a>, and our data for political freedom comes from <a href="https://freedomhouse.org/content/freedom-world-data-and-resources">Freedom House</a>.</p>
+<section id="question-7" class="level2">
+<h2 class="anchored" data-anchor-id="question-7">Question 7</h2>
+<p>Download these two datasets that I’ve cleaned up a bit: [If you want a challenge, try downloading them from the websites and cleaning them up yourself!]</p>
+<ul>
+<li><a href="http://metricsf22.classes.ryansafner.com/data/econ_freedom.csv"><code>econ_freedom.csv</code></a></li>
+<li><a href="http://metricsf22.classes.ryansafner.com/data/pol_freedom.csv"><code>pol_freedom.csv</code></a></li>
+</ul>
+<p>Below is a brief description of the variables I’ve put in each dataset:</p>
+<section id="econ-freedom" class="level3">
+<h3 class="anchored" data-anchor-id="econ-freedom">Econ Freedom</h3>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>year</code></td>
+<td>Year</td>
+</tr>
+<tr class="even">
+<td><code>ISO</code></td>
+<td>Three-letter country code</td>
+</tr>
+<tr class="odd">
+<td><code>country</code></td>
+<td>Name of the country</td>
+</tr>
+<tr class="even">
+<td><code>ef_index</code></td>
+<td>Total economic freedom index (0 - least to 100 - most)</td>
+</tr>
+<tr class="odd">
+<td><code>rank</code></td>
+<td>Rank of the country in terms of economic freedom</td>
+</tr>
+<tr class="even">
+<td><code>continent</code></td>
+<td>Continent the country is in</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="pol-freedom" class="level3">
+<h3 class="anchored" data-anchor-id="pol-freedom">Pol Freedom</h3>
+<table class="table">
+<colgroup>
+<col style="width: 44%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>country</code></td>
+<td>Name of the country</td>
+</tr>
+<tr class="even">
+<td><code>C/T</code></td>
+<td>Whether the location is a country (C) or territory (T)</td>
+</tr>
+<tr class="odd">
+<td><code>year</code></td>
+<td>Year</td>
+</tr>
+<tr class="even">
+<td><code>status</code></td>
+<td>Whether the location is Free (F), Partly Free (F) or Not Free (NF)</td>
+</tr>
+<tr class="odd">
+<td><code>fh_score</code></td>
+<td>Total political freedom index (0 - least to 100 - most)</td>
+</tr>
+</tbody>
+</table>
+<p>Import and save them each as an object using <code>my_df_name &lt;- read_csv("name_of_the_file.csv")</code>. I suggest one as <code>econ</code> and the other as <code>pol</code>, but it’s up to you. Look at each object you’ve created.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="question-8" class="level2">
+<h2 class="anchored" data-anchor-id="question-8">Question 8</h2>
+<p>Now let’s join them together so that we can have a single dataset to work with. You can learn more about this <a href="https://metricsf21.classes.ryansafner.com/slides/1.4-slides#143">in the 1.4 slides</a>. Since both datasets have both <code>country</code> and <code>year</code> (spelled exactly the same in both!), we can use these two variables as a <code>key</code> to combine observations. Run the following code (substituting whatever you want to name your objects):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>freedom <span class="ot">&lt;-</span> <span class="fu">left_join</span>(econ, pol, <span class="co"># join pol tibble to econ tibble</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"country"</span>, <span class="st">"year"</span>)) <span class="co"># keys to match variables between two tibbles!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Take a look at <code>freedom</code> to make sure it appears to have worked.</strong></p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="question-9" class="level2">
+<h2 class="anchored" data-anchor-id="question-9">Question 9</h2>
+<section id="part-a-3" class="level3">
+<h3 class="anchored" data-anchor-id="part-a-3">Part A</h3>
+<p>Make a barplot of the 10 countries with the highest Economic Freedom index score in 2018. You may want to find this first and save it as an object to use for your plot’s <code>data</code> layer. Use <code>geom_col()</code> since we will map <code>ef_index</code> to <code>y</code>. If you want to order the bars, set <code>x = fct_reorder(ISO, desc(ef_index))</code> to reorder <code>ISO</code> (or <code>country</code>, if you prefer) by EF score in descending order.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="part-b-3" class="level3">
+<h3 class="anchored" data-anchor-id="part-b-3">Part B</h3>
+<p>Make a barplot of the 10 countries with the highest Freedom House index score in 2018, similar to what you did for Part A.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="question-10" class="level2">
+<h2 class="anchored" data-anchor-id="question-10">Question 10</h2>
+<p>Now make a scatterplot of Political freedom (<code>fh_score</code> as <code>y</code>) on Economic Freedom (<code>ef_index</code> as <code>x</code>) in the year 2018, and <code>color</code> by <code>continent</code>.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="question-11" class="level2">
+<h2 class="anchored" data-anchor-id="question-11">Question 11</h2>
+<p>Save your plot from Question 10 as an object, and add a new layer where we will highlight a few countries. Pick a few countries (I suggest using the <code>ISO</code> code) and create a new object <code>filter</code>ing the data to only include these countries (again the <code>%in%</code> command will be most helpful here).</p>
+<p>Additionally, <em>install</em> and <em>load</em> a package called <code>"ggrepel"</code>, which will adjust labels so they do not overlap on a plot.</p>
+<p>Then, add the following layer to your plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_label_repel</span>(<span class="at">data =</span> countries, <span class="co"># or whatever object name you created</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">aes</span>(<span class="at">x =</span> ef_index,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">y =</span> fh_score,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">label =</span> ISO, <span class="co"># show ISO as label (you could do country instead)</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color =</span> continent),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="co"># make it a bit transparent</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">box.padding =</span> <span class="fl">0.75</span>, <span class="co"># control how far labels are from points</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">show.legend =</span> F) <span class="co"># don't want this to add to the legend</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This should highlight these countries on your plot.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="question-12" class="level2">
+<h2 class="anchored" data-anchor-id="question-12">Question 12</h2>
+<p>Let’s just look only at the United States and see how it has fared in both measures of freedom over time. <code>filter()</code> the data to look only at the United States (its <code>ISO</code> is <code>"USA"</code>). Use both a <code>geom_point()</code> layer and a <code>geom_path()</code> layer, which will connect the dots over time. Let’s also see this by labeling the years with an additional layer <code>geom_text_repel(aes(label = year))</code>.</p>
+<!--WRITE YOUR ANSWERS BELOW -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write your code here! </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="knit-and-submit" class="level1">
+<h1>Knit and Submit!</h1>
+<p>When you are done, click the <strong>Render</strong> button. Based on the current <code>yaml</code> header <code>format: html</code>, this will currently produce an html webpage, which should automatically open for your review.</p>
+<p>Notice in the <strong>Files</strong> pane in R Studio (by default, the lower right one), there should now be a document called <code>01-problem-set.html</code> (or if you changed the filename) ending in <code>.html</code>. This is the webpage, so you can find this file on your computer (or download it from Rstudio.cloud with by clicking on the checkmark box in front of the file in the Files page and then going to <code>More -&gt; Export...</code> to download the file to your computer) and send this file.</p>
+<p>If you want to make a PDF, install the package “tinytex” and run the following code to install a LaTeX distribution:</p>
+<div class="cell">
+
+</div>
+<p>Then change the format in the <code>yaml</code> header to <code>format: pdf</code> . Clicking <strong>Render</strong> will now produce a PDF, show it, and save it as a new file in the Files pane.</p>
+<p>Either way, send me your output file, <code>html</code> or <code>pdf</code> (or, if you like, <code>word</code>) so long as it shows the input and output code of every chunk. I have set it by default to do this, with <code>echo: true</code> in the <code>yaml</code> header.</p>
+<p>Don’t forget to add your name to the <code>author</code> part of the header!</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

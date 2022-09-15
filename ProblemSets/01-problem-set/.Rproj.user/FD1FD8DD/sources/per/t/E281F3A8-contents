@@ -1,0 +1,372 @@
+---
+title: "Problem Set 1"
+author: "Sam Turner" # put your name here!
+date: "September 21, 2022" # due date
+format: html # change to pdf if you'd like
+editor: visual
+execute:
+  echo: true # show all input code in final document
+---
+
+# The Popularity of Baby Names
+
+Install and load the package `babynames`. Get help for `?babynames` to see what the data includes. **Also, don't forget to load `tidyverse`**!
+
+```{r}
+#install.packages("babynames")
+library(babynames)
+library(tidyverse)
+babynames
+```
+
+## Question 1
+
+### Part A
+
+What are the top 5 boys names for 2017, and what *percent* (note *not* the proportion!) of overall names is each?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 1-a}
+# write your code here! 
+total_boys <- babynames %>% 
+  filter(sex == "M" & year == 2017) %>% #Querey for sex and the year
+  select(n) %>% #Grab the total boy births in a year
+  sum() #Sum all together to get total amount of boys that year
+
+boy_babynames <- babynames %>% 
+  filter(sex == "M" & year == 2017) %>% #Querey again for sex and year
+  mutate(percnt = 100*(n / total_boys)) %>% #Calculate percentage of boys and assign it to percnt
+  arrange(desc(percnt)) #Arrange DataFrame in decending order, putting highest first
+```
+
+The top five boys names for 2017 are as follows:
+
+1.  `r boy_babynames %>% slice(1) %>% select(name)` with `r boy_babynames %>% slice(1) %>% select(percnt)`%
+2.  `r boy_babynames %>% slice(2) %>% select(name)` with `r boy_babynames %>% slice(2) %>% select(percnt)`%
+3.  `r boy_babynames %>% slice(3) %>% select(name)` with `r boy_babynames %>% slice(3) %>% select(percnt)`%
+4.  `r boy_babynames %>% slice(4) %>% select(name)` with `r boy_babynames %>% slice(4) %>% select(percnt)`%
+5.  `r boy_babynames %>% slice(5) %>% select(name)` with `r boy_babynames %>% slice(5) %>% select(percnt)`%
+
+### Part B
+
+What are the top 5 *girls* names for 2017, and what *percent* of overall names is each?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 1-b}
+# write your code here! 
+total_girls <- babynames %>% 
+  filter(sex == "F" & year == 2017) %>%
+  select(n) %>% 
+  sum()
+
+girl_babynames <- babynames %>% 
+  filter(sex == "F" & year == 2017) %>%
+  mutate(percnt = 100*(n / total_girls)) %>%
+  arrange(desc(percnt))
+
+babynames
+```
+
+The top 5 girls names for 2017 are as follows:
+
+1.  `r girl_babynames %>% slice(1) %>% select(name)` with `r girl_babynames %>% slice(1) %>% select(percnt)`%
+2.  `r girl_babynames %>% slice(2) %>% select(name)` with `r girl_babynames %>% slice(2) %>% select(percnt)`
+3.  `r girl_babynames %>% slice(3) %>% select(name)` with `r girl_babynames %>% slice(3) %>% select(percnt)`%
+4.  `r girl_babynames %>% slice(4) %>% select(name)` with `r girl_babynames %>% slice(4) %>% select(percnt)`%
+5.  `r girl_babynames %>% slice(5) %>% select(name)` with `r girl_babynames %>% slice(5) %>% select(percnt)`%
+
+## Question 2
+
+Make two barplots of these top 5 names, one for each sex. Map `aes`thetics `x` to `name` and `y` to `prop` \[or `percent`, if you made that variable, as I did.\] and use `geom_col` (since you are declaring a specific `y`, otherwise you could just use `geom_bar()` and just an `x`.)
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 2a}
+# write your code here! 
+ggplot(data = boy_babynames %>% slice(1:5))+ #Grab first 5 rows
+  aes(x=name,
+      y=percnt,
+      fill=name)+ #Use fill to color the graph
+  geom_col(aes(reorder(name, percnt))) #Reorder the bars so that they look nicer
+
+ggplot(data = girl_babynames %>% slice(1:5))+
+  aes(x=name,
+      y=percnt,
+      fill=name)+
+  geom_col(aes(reorder(name, percnt)))
+```
+
+## Question 3
+
+Find your name. \[If your name isn't in there 😟, pick a random name.\] `count` by `sex` how many babies since 1880 were named your name. \[Hint: if you do only this, you'll get the number of *rows* (years) there are in the data. You want to add the number of babies in each row (`n`), so inside `count`, add `, wt = n` to weight the count by `n`.\] Also create a variable for the percent of each sex.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 3}
+# write your code here! 
+boys_named_sam <- babynames %>% 
+  filter(name=="Samuel" | name=="Sam") %>%
+  filter(sex=="M") %>% 
+  select(n) %>% 
+  sum()
+
+girls_named_sam <- babynames %>% 
+  filter(name=="Samuel" | name=="Sam") %>% 
+  filter(sex=="F") %>% 
+  select(n) %>% 
+  sum()
+
+percnt_boys <- 100*(boys_named_sam / (boys_named_sam + girls_named_sam))
+percnt_girls <- 100*(girls_named_sam / (boys_named_sam + girls_named_sam))
+```
+
+Since 1880 there have been `r boys_named_sam` boys named Sam or Samuel. This makes up `r percnt_boys`% of the total number of people named Sam or Samuel. In the same time period there have been `r girls_named_sam` named Sam or Samuel. They make up `r percnt_girls`% of the population of people named Sam or Samuel.
+
+## Question 4
+
+Make a line graph of the number of babies with your name over time, `color`ed by `sex`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 4}
+# write your code here! 
+named_sam <- babynames %>% 
+  filter(name=="Samuel")
+
+ggplot(data=named_sam)+
+  aes(x=year,
+      y=n)+
+  geom_line(aes(color=sex))
+```
+
+## Question 5
+
+### Part A
+
+Find the most common name for boys by year between 1980-2017. \[Hint: you'll want to first `group_by(year)`. Once you've got all the right conditions, you'll get a table with a lot of data. You only want to keep just the 1st row of each grouped-year's data, so add `%>% slice(1)`.\]
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 5-a}
+# write your code here! 
+babynames %>% 
+  group_by(year) %>% 
+  filter(sex=="M") %>%
+  arrange(desc(n)) %>% 
+  slice(1)
+```
+
+### Part B
+
+Now do the same for girls.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 5-b}
+# write your code here! 
+babynames %>% 
+  group_by(year) %>% 
+  filter(sex=="F") %>%
+  arrange(desc(n)) %>% 
+  slice(1)
+```
+
+## Question 6
+
+Now let's graph the evolution of the most common names since 1880.
+
+### Part A
+
+First, find out what are the top 10 *overall* most popular names for boys and for girls in the data. \[Hint: first `group_by(name)`.\] You may want to create two objects, each with these top 5 names as character elements.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 6-a}
+# write your code here! 
+top_ten_boys_names <- babynames %>% 
+  group_by(name) %>% 
+  filter(sex=="M") %>% 
+  count(name, wt = n) %>% #"wt" keeps tally of n for distinct name
+  arrange(desc(n)) %>% 
+  head(n=5)
+top_ten_boys_names
+```
+
+### Part B
+
+Now make two `line`graphs of these 5 names over time, one for boys, and one for girls. \[Hint: you'll first want to subset the data to use for your `data` layer in the plot. First `group_by(year)` and also make sure you only use the names you found in Part A. Try using the `%in%` command to do this.\]
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 6-b}
+# write your code here! 
+
+```
+
+------------------------------------------------------------------------
+
+# Political and Economic Freedom Around the World
+
+For the remaining questions, we'll look at the relationship between Economic Freedom and Political Freedom in countries around the world today. Our data for economic freedom comes from the [Fraser Institute](https://www.fraserinstitute.org/economic-freedom/dataset?geozone=world&year=2016&page=dataset), and our data for political freedom comes from [Freedom House](https://freedomhouse.org/content/freedom-world-data-and-resources).
+
+## Question 7
+
+Download these two datasets that I've cleaned up a bit: \[If you want a challenge, try downloading them from the websites and cleaning them up yourself!\]
+
+-   [`econ_freedom.csv`](http://metricsf22.classes.ryansafner.com/data/econ_freedom.csv)
+-   [`pol_freedom.csv`](http://metricsf22.classes.ryansafner.com/data/pol_freedom.csv)
+
+Below is a brief description of the variables I've put in each dataset:
+
+### Econ Freedom
+
+| Variable    | Description                                            |
+|-------------|--------------------------------------------------------|
+| `year`      | Year                                                   |
+| `ISO`       | Three-letter country code                              |
+| `country`   | Name of the country                                    |
+| `ef_index`  | Total economic freedom index (0 - least to 100 - most) |
+| `rank`      | Rank of the country in terms of economic freedom       |
+| `continent` | Continent the country is in                            |
+
+### Pol Freedom
+
+| Variable   | Description                                                        |
+|--------------------------------|----------------------------------------|
+| `country`  | Name of the country                                                |
+| `C/T`      | Whether the location is a country (C) or territory (T)             |
+| `year`     | Year                                                               |
+| `status`   | Whether the location is Free (F), Partly Free (F) or Not Free (NF) |
+| `fh_score` | Total political freedom index (0 - least to 100 - most)            |
+
+Import and save them each as an object using `my_df_name <- read_csv("name_of_the_file.csv")`. I suggest one as `econ` and the other as `pol`, but it's up to you. Look at each object you've created.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 7}
+# write your code here! 
+
+```
+
+## Question 8
+
+Now let's join them together so that we can have a single dataset to work with. You can learn more about this [in the 1.4 slides](https://metricsf21.classes.ryansafner.com/slides/1.4-slides#143). Since both datasets have both `country` and `year` (spelled exactly the same in both!), we can use these two variables as a `key` to combine observations. Run the following code (substituting whatever you want to name your objects):
+
+```{r}
+#| echo: true
+#| eval: false # <- reset to true to run this chunk!
+freedom <- left_join(econ, pol, # join pol tibble to econ tibble
+                     by = c("country", "year")) # keys to match variables between two tibbles!
+```
+
+**Take a look at `freedom` to make sure it appears to have worked.**
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 8}
+# write your code here! 
+
+```
+
+## Question 9
+
+### Part A
+
+Make a barplot of the 10 countries with the highest Economic Freedom index score in 2018. You may want to find this first and save it as an object to use for your plot's `data` layer. Use `geom_col()` since we will map `ef_index` to `y`. If you want to order the bars, set `x = fct_reorder(ISO, desc(ef_index))` to reorder `ISO` (or `country`, if you prefer) by EF score in descending order.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 9-a}
+# write your code here! 
+
+```
+
+### Part B
+
+Make a barplot of the 10 countries with the highest Freedom House index score in 2018, similar to what you did for Part A.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 10-b}
+# write your code here! 
+
+```
+
+## Question 10
+
+Now make a scatterplot of Political freedom (`fh_score` as `y`) on Economic Freedom (`ef_index` as `x`) in the year 2018, and `color` by `continent`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 11}
+# write your code here! 
+
+```
+
+## Question 11
+
+Save your plot from Question 10 as an object, and add a new layer where we will highlight a few countries. Pick a few countries (I suggest using the `ISO` code) and create a new object `filter`ing the data to only include these countries (again the `%in%` command will be most helpful here).
+
+Additionally, *install* and *load* a package called `"ggrepel"`, which will adjust labels so they do not overlap on a plot.
+
+Then, add the following layer to your plot:
+
+```{r}
+#| eval: false
+#| echo: true
+
+geom_label_repel(data = countries, # or whatever object name you created
+                     aes(x = ef_index,
+                         y = fh_score,
+                         label = ISO, # show ISO as label (you could do country instead)
+                         color = continent),
+                     alpha = 0.5, # make it a bit transparent
+                     box.padding = 0.75, # control how far labels are from points
+                     show.legend = F) # don't want this to add to the legend
+```
+
+This should highlight these countries on your plot.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 12}
+# write your code here! 
+
+```
+
+## Question 12
+
+Let's just look only at the United States and see how it has fared in both measures of freedom over time. `filter()` the data to look only at the United States (its `ISO` is `"USA"`). Use both a `geom_point()` layer and a `geom_path()` layer, which will connect the dots over time. Let's also see this by labeling the years with an additional layer `geom_text_repel(aes(label = year))`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 13}
+# write your code here! 
+
+```
+
+# Knit and Submit!
+
+When you are done, click the **Render** button. Based on the current `yaml` header `format: html`, this will currently produce an html webpage, which should automatically open for your review.
+
+Notice in the **Files** pane in R Studio (by default, the lower right one), there should now be a document called `01-problem-set.html` (or if you changed the filename) ending in `.html`. This is the webpage, so you can find this file on your computer (or download it from Rstudio.cloud with by clicking on the checkmark box in front of the file in the Files page and then going to `More -> Export...` to download the file to your computer) and send this file.
+
+If you want to make a PDF, install the package "tinytex" and run the following code to install a LaTeX distribution:
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| eval: false
+
+library(tinytex)
+install_tinytex()
+```
+
+Then change the format in the `yaml` header to `format: pdf` . Clicking **Render** will now produce a PDF, show it, and save it as a new file in the Files pane.
+
+Either way, send me your output file, `html` or `pdf` (or, if you like, `word`) so long as it shows the input and output code of every chunk. I have set it by default to do this, with `echo: true` in the `yaml` header.
+
+Don't forget to add your name to the `author` part of the header!

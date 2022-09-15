@@ -1,0 +1,6 @@
+"0","# write your code here! "
+"0","ggplot(data = boy_babynames %>% slice(1:5))+ #Grab first 5 rows"
+"0","  aes(x=name,"
+"0","      y=percnt,"
+"0","      fill=name)+ #Use fill to color the graph"
+"0","  geom_col(aes(reorder(name, percnt))) #Reorder the bars so that they look nicer"
