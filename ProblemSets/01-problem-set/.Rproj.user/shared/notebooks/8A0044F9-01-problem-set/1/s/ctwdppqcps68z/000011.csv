@@ -1,8 +1,0 @@
-"0","# write your code here! "
-"0","named_sam <- babynames %>% "
-"0","  filter(name==""Samuel"")"
-"0",""
-"0","ggplot(data=named_sam)+"
-"0","  aes(x=year,"
-"0","      y=n)+"
-"0","  geom_line(aes(color=sex))"

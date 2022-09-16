@@ -1,9 +1,9 @@
 {
     "id": "E281F3A8",
-    "path": "~/Desktop/ECON 480/01-problem-set/01-problem-set.qmd",
+    "path": "~/Desktop/ECON 480/Econometrics--ECON480/ProblemSets/01-problem-set/01-problem-set.qmd",
     "project_path": "01-problem-set.qmd",
     "type": "quarto_markdown",
-    "hash": "3413322075",
+    "hash": "3212219768",
     "contents": "",
     "dirty": false,
     "created": 1663013879557.0,
@@ -15,17 +15,17 @@
         "source_window_id": "",
         "Source": "Source",
         "docOutlineVisible": "1",
-        "cursorPosition": "193,18",
+        "cursorPosition": "145,18",
         "scrollLine": "0",
-        "rmdVisualModeLocation": "6135:5830",
+        "rmdVisualModeLocation": "8036:6194",
         "rmdVisualCollapsedChunks": ""
     },
     "folds": "",
-    "lastKnownWriteTime": 1663169557,
+    "lastKnownWriteTime": 1663289247,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1663169557283,
+    "last_content_update": 1663289247122,
     "read_only": false,
     "read_only_alternatives": []
 }

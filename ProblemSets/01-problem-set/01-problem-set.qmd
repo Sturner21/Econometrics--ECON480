@@ -138,7 +138,12 @@ named_sam <- babynames %>%
 ggplot(data=named_sam)+
   aes(x=year,
       y=n)+
-  geom_line(aes(color=sex))
+  geom_line(aes(color=sex))+
+  labs(x="Year",
+       y="Births",
+       title="Babies Named Sam",
+       subtitle="Names At Birth Since 1880",
+       color="Sex")
 ```
 
 ## Question 5
@@ -212,9 +217,33 @@ Now make two `line`graphs of these 5 names over time, one for boys, and one for 
 
 ```{r 6-b}
 # write your code here! 
-babynames %>% 
+boys_subset <- babynames %>% 
   filter(name %in% top_ten_boys_names) %>% 
   filter(sex=="M")
+
+girls_subset <- babynames %>% 
+  filter(name %in% top_ten_girls_names) %>% 
+  filter(sex=="F")
+
+ggplot(data = boys_subset)+
+  aes(x=year,
+      y=n)+
+  geom_line(aes(color=name))+
+  labs(x="Year",
+       y="Births",
+       title="Top 5 Most Popular Names For Boys",
+       subtitle="Amount of Babies Named Since 1880",
+       color="Names")
+
+ggplot(data = girls_subset)+
+  aes(x=year,
+      y=n)+
+  geom_line(aes(color=name))+
+  labs(x="Year",
+       y="Births",
+       title="Top 5 Most Popular Names For Girls",
+       subtitle="Amount of Babies Named Since 1880",
+       color="Names")
 ```
 
 ------------------------------------------------------------------------

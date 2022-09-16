@@ -1,6 +1,0 @@
-"0",""
-"0","ggplot(data = girl_babynames %>% slice(1:5))+"
-"0","  aes(x=name,"
-"0","      y=percnt,"
-"0","      fill=name)+"
-"0","  geom_col(aes(reorder(name, percnt)))"

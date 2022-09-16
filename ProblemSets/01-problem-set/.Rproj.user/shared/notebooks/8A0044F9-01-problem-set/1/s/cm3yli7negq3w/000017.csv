@@ -1,8 +1,0 @@
-"0","# write your code here! "
-"0","top_ten_boys_names <- babynames %>% "
-"0","  group_by(name) %>% "
-"0","  filter(sex==""M"") %>% "
-"0","  count(name, wt = n) %>% #""wt"" keeps tally of n for distinct name"
-"0","  arrange(desc(n)) %>% "
-"0","  head(n=5)"
-"0","top_ten_boys_names"
