@@ -274,13 +274,13 @@ Below is a brief description of the variables I've put in each dataset:
 
 ### Pol Freedom
 
-| Variable   | Description                                                        |
+| Variable   | Description                                                         |
 |--------------------------------|----------------------------------------|
-| `country`  | Name of the country                                                |
-| `C/T`      | Whether the location is a country (C) or territory (T)             |
-| `year`     | Year                                                               |
-| `status`   | Whether the location is Free (F), Partly Free (F) or Not Free (NF) |
-| `fh_score` | Total political freedom index (0 - least to 100 - most)            |
+| `country`  | Name of the country                                                 |
+| `C/T`      | Whether the location is a country (C) or territory (T)              |
+| `year`     | Year                                                                |
+| `status`   | Whether the location is Free (F), Partly Free (PF) or Not Free (NF) |
+| `fh_score` | Total political freedom index (0 - least to 100 - most)             |
 
 Import and save them each as an object using `my_df_name <- read_csv("name_of_the_file.csv")`. I suggest one as `econ` and the other as `pol`, but it's up to you. Look at each object you've created.
 
@@ -288,7 +288,8 @@ Import and save them each as an object using `my_df_name <- read_csv("name_of_th
 
 ```{r 7}
 # write your code here! 
-
+econ <- read.csv("econ_freedom.csv")
+pol <- read.csv("pol_freedom.csv")
 ```
 
 ## Question 8
@@ -308,7 +309,8 @@ freedom <- left_join(econ, pol, # join pol tibble to econ tibble
 
 ```{r 8}
 # write your code here! 
-
+freedom %>% 
+  glimpse()
 ```
 
 ## Question 9
