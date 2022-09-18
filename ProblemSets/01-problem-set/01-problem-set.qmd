@@ -89,13 +89,22 @@ ggplot(data = boy_babynames %>% slice(1:5))+ #Grab first 5 rows
   aes(x=name,
       y=percnt,
       fill=name)+ #Use fill to color the graph
-  geom_col(aes(reorder(name, percnt))) #Reorder the bars so that they look nicer
+  geom_col(aes(reorder(name, percnt)))+ #Reorder the bars so that they look nicer
+  labs(x="Name",
+       y="Proportion Named (Percent)",
+       title="Top 5 Boys Names in 2017",
+       fill="Name")
 
 ggplot(data = girl_babynames %>% slice(1:5))+
   aes(x=name,
       y=percnt,
       fill=name)+
-  geom_col(aes(reorder(name, percnt)))
+  geom_col(aes(reorder(name, percnt)))+
+  labs(x="Name",
+       y="Proportion Named (Percent)",
+       title="Top 5 Girls Names in 2017",
+       subtitle="",
+       fill="Name")
 ```
 
 ## Question 3
@@ -275,7 +284,7 @@ Below is a brief description of the variables I've put in each dataset:
 ### Pol Freedom
 
 | Variable   | Description                                                         |
-|--------------------------------|----------------------------------------|
+|---------------|---------------------------------------------------------|
 | `country`  | Name of the country                                                 |
 | `C/T`      | Whether the location is a country (C) or territory (T)              |
 | `year`     | Year                                                                |
@@ -296,9 +305,9 @@ pol <- read.csv("pol_freedom.csv")
 
 Now let's join them together so that we can have a single dataset to work with. You can learn more about this [in the 1.4 slides](https://metricsf21.classes.ryansafner.com/slides/1.4-slides#143). Since both datasets have both `country` and `year` (spelled exactly the same in both!), we can use these two variables as a `key` to combine observations. Run the following code (substituting whatever you want to name your objects):
 
-```{r}
+```{r 8a}
 #| echo: true
-#| eval: false # <- reset to true to run this chunk!
+#| eval: true # <- reset to true to run this chunk!
 freedom <- left_join(econ, pol, # join pol tibble to econ tibble
                      by = c("country", "year")) # keys to match variables between two tibbles!
 ```
@@ -307,7 +316,7 @@ freedom <- left_join(econ, pol, # join pol tibble to econ tibble
 
 <!--WRITE YOUR ANSWERS BELOW -->
 
-```{r 8}
+```{r 8b}
 # write your code here! 
 freedom %>% 
   glimpse()
@@ -323,7 +332,21 @@ Make a barplot of the 10 countries with the highest Economic Freedom index score
 
 ```{r 9-a}
 # write your code here! 
+top_ten_freedom_2018 <- freedom %>% 
+  filter(year == 2018) %>% 
+  arrange(desc(ef_index)) %>% 
+  slice(1:10)
 
+ggplot(data=top_ten_freedom_2018)+
+  aes(x=fct_reorder(ISO, desc(ef_index)),
+      y=ef_index,
+      fill=ISO)+
+  geom_col()+
+  labs(x="Country Abbreviation",
+       y="Economic Freedom Index Score",
+       title="Economic Freedom Index By Country",
+       subtitle="Top 10 Countries",
+       fill="Country Code")
 ```
 
 ### Part B
@@ -334,7 +357,16 @@ Make a barplot of the 10 countries with the highest Freedom House index score in
 
 ```{r 10-b}
 # write your code here! 
-
+ggplot(data=top_ten_freedom_2018,
+       aes(x=fct_reorder(ISO, desc(ef_index)), 
+           y=ef_index,
+           fill=ISO))+
+  geom_bar(stat = 'identity')+
+  labs(x="Country Abbreviation",
+       y="Economic Freedom Index Score",
+       title="Economic Freedom Index By Country",
+       subtitle="Top 10 Countries",
+       fill="Country Code")
 ```
 
 ## Question 10
@@ -345,7 +377,20 @@ Now make a scatterplot of Political freedom (`fh_score` as `y`) on Economic Free
 
 ```{r 11}
 # write your code here! 
+freedom_2018 <- freedom %>% 
+  filter(year==2018)
 
+EFPFScatter <- ggplot(data=freedom_2018)+
+  aes(x=ef_index,
+      y=fh_score,
+      color=continent)+
+  geom_point()+
+  labs(x="Economic Freedom Index Score",
+       y="Political Freedom Index Score",
+       title="Political Vs. Economic Freedom For Continents",
+       color="Continent")
+
+EFPFScatter
 ```
 
 ## Question 11
@@ -357,11 +402,18 @@ Additionally, *install* and *load* a package called `"ggrepel"`, which will adju
 Then, add the following layer to your plot:
 
 ```{r}
-#| eval: false
+#| eval: true
 #| echo: true
+library(ggrepel)
+
+cntry_list <- c("USA", "CAN", "HKG", "CHE")
+
+countries <- freedom %>% 
+  filter(ISO %in% cntry_list)
 
 geom_label_repel(data = countries, # or whatever object name you created
-                     aes(x = ef_index,
+                   max.overlaps = getOption("ggrepel.max.overlaps", default = 20), #Need to change to get access to points
+                   aes(x = ef_index,
                          y = fh_score,
                          label = ISO, # show ISO as label (you could do country instead)
                          color = continent),
@@ -376,7 +428,25 @@ This should highlight these countries on your plot.
 
 ```{r 12}
 # write your code here! 
-
+ggplot(data=countries)+
+  aes(x=ef_index,
+      y=fh_score,
+      color=continent)+
+  geom_point()+
+  labs(x="Economic Freedom Index Score",
+       y="Political Freedom Index Score",
+       title="Political Vs. Economic Freedom For Continents",
+       subtitle="Pictured Is USA, Canada, and Switzerland",
+       color="Continent")+
+  geom_label_repel(data = countries, # or whatever object name you created
+                   max.overlaps = getOption("ggrepel.max.overlaps", default = 20), #Need to change to get access to points
+                   aes(x = ef_index,
+                         y = fh_score,
+                         label = ISO, # show ISO as label (you could do country instead)
+                         color = continent),
+                     alpha = 0.5, # make it a bit transparent
+                     box.padding = 0.75, # control how far labels are from points
+                     show.legend = F) # don't want this to add to the legend
 ```
 
 ## Question 12
@@ -387,7 +457,22 @@ Let's just look only at the United States and see how it has fared in both measu
 
 ```{r 13}
 # write your code here! 
+usa_freedom <- freedom %>% 
+  filter(ISO == "USA")
 
+#Couldn't figure out how to pivot longer
+ggplot(data=usa_freedom, aes(x=year))+
+  geom_point(aes(y=ef_index, color="Economic Index"))+
+  geom_path(aes(y=ef_index, color="Economic Index"))+
+  geom_point(aes(y=fh_score/10, color="Freedom Index"))+
+  geom_path(aes(y=fh_score/10, color="Freedom Index"))+
+  scale_color_manual(name="Scores", 
+                     breaks = c('Economic Index', 'Freedom Index'),
+                     values = c('Economic Index'='blue', 'Freedom Index'='red'))+
+  labs(x="Year",
+       y="Index Score",
+       title="Economic and Political Freedom In the USA",
+       subtitle="Since 1970")
 ```
 
 # Knit and Submit!
