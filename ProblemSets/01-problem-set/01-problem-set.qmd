@@ -2,7 +2,9 @@
 title: "Problem Set 1"
 author: "Sam Turner" # put your name here!
 date: "September 21, 2022" # due date
-format: html # change to pdf if you'd like
+format: 
+  html: 
+    self-contained: true
 editor: visual
 execute:
   echo: true # show all input code in final document
@@ -284,7 +286,7 @@ Below is a brief description of the variables I've put in each dataset:
 ### Pol Freedom
 
 | Variable   | Description                                                         |
-|---------------|---------------------------------------------------------|
+|-----------------|-------------------------------------------------------|
 | `country`  | Name of the country                                                 |
 | `C/T`      | Whether the location is a country (C) or territory (T)              |
 | `year`     | Year                                                                |
