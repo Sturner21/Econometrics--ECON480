@@ -1,0 +1,303 @@
+---
+title: "Problem Set 2"
+author: "Sam Turner" # put your name here!
+date: "September 28, 2022" # due date
+format:
+  html: 
+    self-contained: true # so we don't need other files (like plot images) 
+editor: visual
+execute:
+  echo: true # show all input code in final document
+---
+
+# Theory and Concepts
+
+## Question 1
+
+In your own words, explain the difference between endogeneity and exogeneity.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+A factor, x, is exogenous if it does not affect any other factors which affect some factor y. This means that the factor x is either directly influential on y, or is completely independent.
+
+A factor x is said to be endogenous if it affects any other factor the is related to some factor y. This means that a factor x is endogenous if has any affect on some factor z, which affects the factor y. Even if the factor x is also a direct factor of y.
+
+## Question 2
+
+### Part A
+
+In your own words, explain what (sample) standard deviation \*means\*.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+A sample standard deviation is a measurement of much variance from the mean there is in a given sample of a population.
+
+### Part B
+
+In your own words, explain how (sample) standard deviation *is calculated*. You may also write the formula, but it is not necessary.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Sample standard deviation is calculated by taking the square root of the variance divided by the correcting term n-1, where n is the sample size. The variance is calculated by first taking the mean of the sample. Then, square the difference of between each value in the sample and the sample mean. Finally, sum the squared values and you have the variance in a given sample.
+
+# Problems
+
+For the remaining questions, you may use `R` to *verify*, but please calculate all sample statistics by hand and show all work.
+
+## Question 3
+
+Suppose you have a very small class of four students that all take a quiz. Their scores are reported as follows:
+
+$$\{83, 92, 72, 81 \}
+$$
+
+### Part A
+
+Calculate the median.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Because the sample size is even (n=4), we must take the arithmetic mean of the remaining two median numbers, 81 and 83. The arithmetic mean of these two numbers is 82.
+
+(81+83)/2 = 164/2 = 82
+
+### Part B
+
+Calculate the sample mean, $\bar{x}$.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The sample mean is the simply the sum of the sample values divided by the number of values:
+
+(83+92+72+81) / 4 = 328 / 4 = 82
+
+### Part C
+
+Calculate the sample standard deviation, $s$.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+To begin we need to calculate the sample standard deviation, which we have done above and know it is 82.
+
+We then need to calculate how far each of the given values are from the mean:
+
+(83-82, 92-82, 72-82, 81-82) = (1, 10, -10, 1).
+
+And then square those differences:
+
+(1, 100, 100, 1).
+
+Sample variance is calculated by taking the sum of these squared differences and dividing it by n-1 where n is the sample size:
+
+(1+100+100+1) / 4-1 = 202 / 3 = 67.33.
+
+Finally, the sample standard deviation is simply the square-root of the sample variance. Which is the square-root of 67.33 and is roughly equal to 8.206.
+
+To help with visualization I have included some code:
+
+```{r}
+library(tidyverse)
+
+quiz_score <- tibble(score = c(83, 92, 72, 81))
+
+quiz_score <- quiz_score %>% 
+  mutate(dif = score - 82) %>% 
+  mutate(dif_sqr = dif**2)
+
+quiz_score
+```
+
+### Part D
+
+Make or sketch a rough histogram of this data, with the size of each bin being 10 (i.e. 70's, 80's, 90's, 100's). You can draw this by hand or use `R`.
+
+If you are using `ggplot`, you want to use `+ geom_histogram(breaks = seq(start,end,by))` and add another layer `+ scale_x_continuous(breaks=seq(start,end,by))` . The first layer creates bins in the histogram, and the second layer creates ticks on the x axis; both by creating a `seq`uence starting at some `start`ing value, some `end`ing value, `by` a certain interval (e.g. by 2, or by 10).\
+\
+Is this distribution roughly symmetric or skewed? What would we expect about the mean and the median?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+As we can see below, the data does not appear to be skewed. We can verify this finding because we know that the median=mean since we solved for both above.
+
+```{r 3}
+# write your code here!
+ggplot(data = quiz_score, aes(x=score))+
+  geom_histogram(breaks = seq(70, 100, 10), fill="brown", color="black")+
+  scale_x_continuous(breaks = seq(70, 100, 10))
+```
+
+### Part E
+
+Suppose instead the person who got the 72 did not show up that day to class, and got a 0 instead. Recalculate the mean and median. What happened and why?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+New set of data: (0, 81, 83, 92).
+
+While the median remains unaffected at 82, the mean becomes much lower and is now 64.
+
+(0+81+83+92) / 4 = 256 / 4 = 64.
+
+## Question 4
+
+Suppose the probabilities of a visitor to Amazon's website buying 0, 1, or 2 books are 0.2, 0.4, and 0.4 respectively.
+
+### Part A
+
+Calculate the *expected number* of books a visitor will purchase.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The expected number of purchases is simply the sum of all the probabilities of purchasing times their respective amount of items purchased.
+
+(0\*0.2) + (1\*0.4) + (2\*0.4) = 0 + 0.4 + 0.8 = 1.2
+
+### Part B
+
+Calculate the *standard deviation* of book purchases.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+To get the standard deviation of these observations, we would first find the difference between the observations and the mean:
+
+(0-1.2, 1-1.2, 2-1.2) = (-1.2, -0.2, 0.8).
+
+Squaring the differences:
+
+(1.44, 0.04, .64).
+
+Sum the differences:
+
+2.12.
+
+Divide by the sample size minus 1:
+
+2.12 / 3-1 = 2.12 / 2 = 1.06.
+
+And finally take the square root which is roughly equal to 1.029563.
+
+### Optional Part C (Bonus):
+
+Try doing this in `R` by making an initial tibble of the data, and then making new columns to the "table" like we did in class.
+
+```{r 4c}
+# write your code here! 
+amazon <- tibble(n = c(0,1,2),
+                 prob = c(.2, .4, .4))
+amazon <- amazon %>% 
+  mutate(dif = n - 1.2) %>% 
+  mutate(dif_sqr = dif**2)
+
+amazon
+```
+
+## Question 5
+
+Scores on the SAT (out of 1600) are approximately normally distributed with a mean of 500 and standard deviation of 100.
+
+### Part A
+
+What is the probability of getting a score between a 400 and a 600?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Converting both to Z-Scores, we get:
+
+400-500 / 100 = -100/100 = -1
+
+600-500 / 100 = 100/100 = 1.
+
+Since the SAT is normally distributed, we know that 68% of the observations, in this case scores, lie between 1 and -1 standard deviations from the mean. Therefore, there is a 68% chance to get between a 400 and a 600 on the SAT.
+
+### Part B
+
+What is the probability of getting a score between a 300 and a 700?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Converting both to Z-Scores, we get:
+
+300-500 / 100 = -200 / 100 = -2
+
+700-500 / 100 = 200 / 100 = 2
+
+Since the SAT is normally distributed, we know that 95% of the observations, in this case scores, lie between 2 and -2 standard deviations from the mean. Therefore, there is a 95% chance to get between a 300 and a 700 on the SAT.
+
+### Part C
+
+What is the probability of getting *at least* a 700?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We know that 700 is 2 standard deviations away from the mean from the last part. And we know that 95% of the data lies between -2 and 2 standard deviations from the mean. Therefore, 47.5% of the data lies between 0 and 2 standard deviations from the mean. And we know that there is a 50% to score less than the mean. Therefore, we know that there is a 97.5% chance of getting a score up to 2 standard deviations from the mean. In other words, we know that there is a 97.5% of getting at least a 700.\
+
+### Part D
+
+What is the probability of getting *at most* a 700?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We know that the probability of getting at least of 700 is 97.5% and that the area of the probability function is 100%. Therefore, there must be a 2.5% of getting a score better than 700.\
+
+### Part E
+
+What is the probability of getting exactly a 500?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+It is impossible to calculate since we are operating with a continuous variable(?).
+
+Using calculus we know that the integral of the pdf from 500 to 500 is 0.
+
+## Question 6
+
+Redo problem 5 by using the `pnorm()` command in `R`.
+
+**Hint**: This function has four arguments:
+
+1.  the value of the random variable
+2.  the mean of the distribution
+3.  the sd of the distribution
+4.  `lower.tail` `TRUE` or `FALSE`.
+
+```{r 6}
+# write your code here! 
+part_a <- (pnorm(600, mean=500, sd=100) - pnorm(400, mean=500, sd=100))
+part_a
+
+part_b <- (pnorm(700, mean=500, sd=100) - pnorm(300, mean=500, sd=100))
+part_b
+
+part_c <- pnorm(700, mean=500, sd=100)
+part_c
+
+part_d <- pnorm(700, mean=500, sd=100, lower.tail=FALSE)
+part_d
+
+part_e <- pnorm(500, mean=500, sd=100) - pnorm(500, mean=500, sd=100)
+part_e
+```
+
+# Knit and Submit!
+
+When you are done, click the **Render** button. Based on the current `yaml` header `format: html`, this will currently produce an html webpage, which should automatically open for your review.
+
+Notice in the **Files** pane in R Studio (by default, the lower right one), there should now be a document called `01-problem-set.html` (or if you changed the filename) ending in `.html`. This is the webpage, so you can find this file on your computer (or download it from Rstudio.cloud with by clicking on the checkmark box in front of the file in the Files page and then going to `More -> Export...` to download the file to your computer) and send this file.
+
+If you want to make a PDF, install the package "tinytex" and run the following code to install a LaTeX distribution:
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| eval: false
+
+library(tinytex)
+install_tinytex()
+```
+
+Then delete the lines in the `yaml` header that say `format: html: self-contained: TRUE`, and add a simple line that says `format: pdf` . Clicking **Render** will now produce a PDF, show it, and save it as a new file in the Files pane.
+
+Either way, send me your output file, `html` or `pdf` (or, if you like, `word`) so long as it shows the input and output code of every chunk. I have set it by default to do this, with `echo: true` in the `yaml` header.
+
+Don't forget to add your name to the `author` part of the header!
