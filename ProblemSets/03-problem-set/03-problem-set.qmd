@@ -1,0 +1,514 @@
+---
+title: "Problem Set 3"
+author: "Sam Turner" # put your name here!
+date: "October 14, 2022" # due date
+format:
+  html: 
+    self-contained: true # so we don't need other files (like plot images) 
+editor: visual
+execute:
+  echo: true # show all input code in final document
+---
+
+```{r}
+#| label: load-packages
+#| warning: false
+#| message: false
+# load packages, they are all installed for you already (in the cloud only)
+library(tidyverse) # your friend and mine
+library(broom) # for tidy regression
+library(lmtest) # for heteroskedasticity test
+library(estimatr) # for robust SEs
+library(modelsummary) # for nice regression tables
+library(car) # for outlier test
+library(infer) # for simulating inference
+```
+
+# Theory and Concepts
+
+## Question 1
+
+In your own words, describe what exogeneity and endogeneity mean, and how they are related to bias in our regression. What things can we learn about the bias if we know $X$ is endogenous?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Exogeneity in a model means that the error term and the estimate for beta 1 hat are not correlated. While Endogeneity in a model means that the error term and the estimate for beta 1 hat are correlated. If a model is endogenous, that would mean that it gives a biased estimate of the relationship between X and Y. In other words, the beta 1 hat that we have calculated is not correct. But, if we know the model is endogenous, and what the value of the correlation is between X and the error term, then we can deduce how the bias is effecting our model. If the correlation between X and the error term is positive, we know that our estimate for beta 1, is too high. Likewise, we know that if the correlation between X and the error term is negative, we know that our estimate for beta 1 is too low.
+
+## Question 2
+
+In your own words, describe what $R^2$ means. How do we calculate it, what does it tell us, and how do we interpret it?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$R^2$ is the a metric used to describe how well our model can explain the variation of the dependent variable, Y.
+
+It can be calculated a number of ways, but the most intuitive is it takes the differences between the predicted values of Y and the mean of all Y's and squares is it. The sum of all of these is called the SSM, or the Model Sum of Squares. It divides this SSM by the SST, which takes the sum of all the squared differences between the actual Y and the mean of all Y's.
+
+If our model was able to perfectly explain the data, then our $R^2$ would be 1. This is hardly ever the case, which means that our $R^2$ is between 0 and 1. Therefore, the closer to 1 our $R^2$ is, the better it explains the data.
+
+## Question 3
+
+In your own words, describe what the standard error of the regression ($SER$) means. How do we calculate it, what does it tell us, and how do we interpret it?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The standard error of the regression is the average distance between the each data point and the regression line.
+
+It is difference between 1 and $R^2$, in other words, it is the sum of the squared differences between the predicted value and the actual values. We then divide this by the amount of observations less 2. Then take the square root of what's left.
+
+It tells us how far our regression is from each data point on average, in terms of the units of the predicted value. A high SER would mean that the regression line is not very good at predicting each point but can be good at generally predicting where the point will be.
+
+## Question 4
+
+In your own words, describe what homoskedasticity and heteroskedasticity mean: both in ordinary English, and in terms of the graph of the OLS regression line.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Homoskedasticity means that the variance of the error (difference between predicted and actual) is roughly the same across each value of X. If it is not constant, then it is called heteroskedastic. If it was heteroskedastic, the points on the scatter plot would look like they fan out farther from the regression line at some places, while at others the are more closely packed around the regression line.
+
+## Question 5
+
+In your own words, describe what the variation in $\hat{\beta_1}$ (either variance or standard error) means, or is measuring. What three things determine the variation, and in what way?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Any time that we sample a population to get an estimate for $\beta_1$, which we call $\hat{\beta_1}$. From each random sample we take, we expect to get a slightly different $\hat{\beta_1}$ simply due to random sampling. The range that of $\hat{\beta_1}$ that we get is known as its variance. However, we do not need to go out and sample the same population repeatedly to get our variance of $\hat{\beta_1}$. We can use the formula of $\frac{SER^2}{n*var(X)}$ to get what our variance would be, if our $\hat{\beta_1}$ is unbiased. Thus, there are 3 factors that would affect our variation of $\hat{\beta_1}$ . The SER, observations (n), and the variation in X ($var(X)$).
+
+## Question 6
+
+In your own words, describe what a p-value means, and how it is used to establish statistical significance.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+P values, in hypothesis testing, describe what the probability is that we find a value that extreme or more extreme given that the null hypothesis is true.
+
+If the chances of us finding a value are $x$, then we say our finding is statistically significant if our $x < \alpha$. Where $\alpha$ is our predetermined critical value.
+
+## Question 7
+
+A researcher is interested in examining the impact of illegal music downloads on commercial music sales. The author collects data on commercial sales of the top 500 singles from 2017 (Y) and the number of downloads from a web site that allows 'file sharing' (X). The author estimates the following model:
+
+$$
+\text{music sales}_i = \beta_0+\beta_1 \text{illegal downloads}_i + u_i
+$$
+
+The author finds a large, positive, and statistically significant estimate of $\hat{\beta_1}$. The author concludes these results demonstrate that illegal downloads actually *boost* music sales. Is this an unbiased estimate of the impact of illegal music on sales? Why or why not? Do you expect the estimate to overstate or understate the true relationship between illegal downloads and sales?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The model that this researcher is using is biased. We know this because the model they use is endogenous, or that there is something in the error term that is correlated with both X (illegal downloads) and Y (music sales). One example of this would be that it is the popularity of the music that drives people to download them illegally. This popularity would be one of the factors in the error term and correlates with both how many people buy a song and how much it is pirated, fitting the definition of endogenous exactly. And we would expect that this model produces a biased $\hat{\beta_1}$ that is higher than the actual $\beta_1$.
+
+# Theory Problems
+
+For the following questions, please *show all work* and explain answers as necessary. You may lose points if you only write the correct answer. You may use `R` to *verify* your answers, but you are expected to reach the answers in this section "manually."
+
+## Question 8
+
+A researcher wants to estimate the relationship between average weekly earnings ($AWE$, measured in dollars) and $Age$ (measured in years) using a simple OLS model. Using a random sample of college-educated full-time workers aged 25-65 yields the following:
+
+$$
+\widehat{AWE} = 696.70+9.60 \, Age
+$$
+
+### Part A
+
+Interpret what $\hat{\beta_0}$ means in this context.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\hat{\beta_0}$ in this context would mean that at age 0, we would expect someone to earn \$696.70 each week.
+
+### Part B
+
+Interpret what $\hat{\beta_1}$ means in this context.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+In this context, $\hat{\beta_1}$ means that for every additional year in age, we expect someone to make an additional \$9.60.
+
+### Part C
+
+The $R^2=0.023$ for this regression. What are the units of the $R^2$, and what does this mean?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The unites of $R^2$ are dollars, or rather cents since the value of $R^2$ is so low. This means that we can describe about 2.3% of average weekly earnings from our model that only considers age.
+
+### Part D
+
+The $SER, \, \hat{\sigma_u}=624.1$ for this regression. What are the units of the SER in this context, and what does it mean? Is the SER large in the context of this regression?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Since $R^2$ is in dollars, SER is also in dollars. It means that on average, there is a difference of \$624.10 between what the regression predicts and what the actual wages are.
+
+### Part E
+
+Suppose Maria is 20 years old. What is her predicted $\widehat{AWE}$?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Maria's predicted wage = 696.7 + 9.6(20) = 696.7 + 192 = 888.7. Or, \$888.70
+
+### Part F
+
+Suppose the data shows her *actual* $AWE$ is \$430. What is her residual? Is this a relatively good or a bad prediction? Hint: compare your answer here to your answer in Part D.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+If her actual wage is 430 then her residual = 888.7 - 430 = 458.7. Relatively speaking with this dataset, this is a better than average prediction. However, \$450 weekly means that this model is off by more than \$23,000 annually!
+
+### Part G
+
+What does the error term, $u_i$ represent in this case? What might individuals have different values of $\hat{u}_i$?
+
+The error term represents all the other factors that influence the wage of people like Maria, that we either can't or haven't measured. An excellent example of something in the error term that affects wages would be level of education.
+
+### Part H
+
+Do you think that $Age$ is exogenous? Why or why not? Would we expect $\hat{\beta_1}$ to be too *large* or too *small*?
+
+This model is very clearly endogenous, and thus not exogenous. We know its endogenous because there are factors correlated with both $Age$ and $AWE$ in the error term. I would expect that $\hat{\beta_1}$ would be too high because there is a positive correlation with variables in the error term (such as years in school) and $AWE$.
+
+## Question 9
+
+Suppose a researcher is interested in estimating a simple linear regression model:
+
+$$
+Y_i=\beta_0+\beta_1X_i+u_i
+$$
+
+In a sample of 48 observations, she generates the following descriptive statistics:
+
+-   $\bar{X}=30$
+-   $\bar{Y}=63$
+-   $\displaystyle\sum^n_{i=1}(X_i-\bar{X})^2= 6900$
+-   $\displaystyle\sum^n_{i=1}(Y_i-\bar{Y})^2= 29000$
+-   $\displaystyle\sum^n_{i=1}(X_i-\bar{X})(Y_i-\bar{Y})=13800$
+-   $\displaystyle\sum^n_{i=1}\hat{u}^2=1656$
+
+### Part A
+
+What is the OLS estimate of $\hat{\beta_1}$?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\hat{\beta_1} = \frac{cov(X,Y)}{var(X)}$. We can substitute the 5th and 3rd items into our estimate to find this. $\frac{13800}{6900} = 2$. Thus our estimate for $\hat{\beta_1}$ is 2.
+
+### Part B
+
+What is the OLS estimate of $\hat{\beta_0}$?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\hat{\beta_0} = \bar{Y} - \hat{\beta_1} = 63 - 2 = 61$
+
+### Part C
+
+Suppose the OLS estimate of $\hat{\beta_1}$ has a standard error of $0.072$. Could we probably reject a null hypothesis of $H_0: \beta_1=0$ at the 5% level?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We can calculate our test statistic $t$ to be $t = \frac{\hat{\beta_1}}{se(\hat{\beta_1})} = \frac{2}{0.072} = 27.\bar{77}$. This is well over the 2, which we use as the rule of thumb. Thus we can say that the $\hat{\beta_1}$ is statistically significant and we reject the null hypothesis $H_0$
+
+### Part D
+
+Calculate the $R^2$ for this model. How much variation in $Y$ is explained by our model?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r 3}
+# write your code here!
+
+#Some of squared residuals = 1656
+#Total sum of squares = 29000
+
+R_squared = 1 - (1656/29000)
+R_squared
+```
+
+# R Questions
+
+Answer the following questions using `R`. When necessary, please write answers in the same document (rendered to `html` or `pdf`, typed `.doc(x)`, or handwritten) as your answers to the above questions. Be sure to include (email or print an `.R` file, or show in your rendered quarto document) your code and the outputs of your code with the rest of your answers.
+
+## Question 10
+
+-   [`mlbattend.csv`](http://metricsf22.classes.ryansafner.com/files/data/mlbattend.csv)
+
+Download the `MLBattend` dataset. This data contains data on attendance at major league baseball games for all 32 MLB teams from the 1970s-2000. We want to answer the following question:
+
+**"How big is home-field advantage in baseball? Does a team with higher attendance at home games over their season have score more runs over their season?"**
+
+### Part A
+
+Clean up the data a bit by `mutate()`-ing a variable to measure home attendance in millions. This will make it easier to interpret your regression later on.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+mlbattend <- read_csv("MLBattend.csv")
+
+mlbattend <- mlbattend %>% 
+  mutate(attend_mil = home_attend / 1000000)
+
+mlbattend %>% 
+  glimpse()
+```
+
+### Part B
+
+Get the correlation between Runs Scored and Home Attendance.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+cor(mlbattend$attend_mil, mlbattend$runs_scored)
+```
+
+### Part C
+
+Plot a scatterplot of Runs Scored (`y`) on Home Attendance (`x`). Add a regression line.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+ggplot(data = mlbattend)+
+  aes(x=attend_mil,
+      y=runs_scored)+
+  geom_point()+
+  geom_smooth(method = "lm")
+```
+
+### Part D
+
+We want to estimate a regression of Runs Scored on Home Attendance:
+
+$$
+\text{runs scored}_i = \beta_0 + \beta_1 \, \text{home attendance}_i + u_i
+$$
+
+Run this regression in `R`.
+
+What are $\hat{\beta_0}$ and $\hat{\beta_1}$ for this model? Interpret them in the context of our question.
+
+Hint: make sure to save your regression model as an object, and get a `summary()` of it. This object will be needed later.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+In the regression, $\hat{\beta_0}$ means that if a team has 0 attendance in a season, we expect them to score 572 runs in a season. And our $\hat{\beta_1}$ means that for every jump in attendence per year by a million, we would expect a team to score 68 more runs over the course of that year.
+
+```{r}
+# write your code here! 
+attnd_reg <- lm(runs_scored ~ attend_mil, data = mlbattend)
+
+attnd_reg %>% 
+  summary()
+```
+
+### Part E
+
+Write out the estimated regression equation.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\hat{Y} = 572 + 68X$
+
+### Part F
+
+Make a regression table of the output using `modelsummary()`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here
+modelsummary(attnd_reg)
+```
+
+### Part G
+
+Check the goodness of fit statistics. What is the $R^2$ and the $SER$ of this model? Interpret them both in the context of our question.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Our $R^2$ is .244, which means that we can explain about 25% of the teams runs scored to their attendance. While the SER is about 4.2, which means that on average, our predicted runs is off by about 4 runs.
+
+### Part H
+
+Now let's start running some diagnostics of the regression. Make a histogram of the residuals. Do they look roughly normal?
+
+Hint: you will need to use the `broom` package's `augment()` command on your saved regression object to add containing the residuals (`.resid`), and save this as a new object - to be your data source for the plot in this part and the next part.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here
+attnd_reg_aug <- attnd_reg %>% 
+  augment()
+
+ggplot(data = attnd_reg_aug)+
+  aes(x=.resid)+
+  geom_histogram()
+```
+
+### Part I
+
+Make a residual plot.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here
+ggplot(data = attnd_reg_aug)+
+  aes(x=runs_scored,
+      y=.resid)+
+  geom_point()
+```
+
+### Part J
+
+Test the regression for heteroskedasticity. Are the errors homoskedastic or heteroskedastic?
+
+Hint: use the `lmtest` package's `bptest()` command on your saved regression object.
+
+Run another regression using robust standard errors. Hint: use the `estimatr` package's `lm_robust()` command and save the output like the following:
+
+```{r}
+#| eval: false # <- change to true or delete if you want to run this chunk!
+reg_robust <-lm_robust(y ~ x, data = the_data, # change y, x, and data names to yours
+                              se_type = "stata") # we'll use this method to calculate
+```
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+As we can see from the BP test, we fail to reject the null hypothesis that the data is homoskedastic. Which explains why our robust regression numbers do not change greatly.
+
+```{r}
+# write your code here
+attnd_reg %>% 
+  bptest()
+
+reg_robust <- lm_robust(runs_scored ~ attend_mil, data = mlbattend, se_type = "stata")
+reg_robust
+```
+
+Now make another regression output table with `modelsummary`, with one column using regular standard errors (just use your original saved regression object) and another using robust standard errors (use this new saved object)
+
+\
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here
+modelsummary(attnd_reg)
+modelsummary(reg_robust)
+```
+
+### Part K
+
+Test the data for outliers. If there are any, identify which team(s) and season(s) are outliers. Hint: use the `car` package's `outlierTest()` command on your saved regression object.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+outlierTest says that there aren't any outlieres. However, my intuition says that this conclusion is false.
+
+```{r}
+# write your code here
+attnd_reg %>% 
+  outlierTest()
+```
+
+### Part L
+
+Look back at your regression results. What is the marginal effect of home attendance on runs scored? Is this statistically significant? Why or why not?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Our marginal effect of home attendance on runs scored 68.8 more runs scored per year if attendance increased by a million people. We can say that this finding is statistically significant because our p value is some value that is basically 0. Much lower than the .05 threshold that we needed.
+
+```{r}
+# write your code here
+attnd_reg %>% 
+  summary()
+```
+
+### Part M
+
+Now we'll try out the `infer` package to understand the $p$-value for our observed slope in our regression model.
+
+First, save the (value of) our sample $\hat{\beta}_1$ from your regression in Part D as an object, I suggest:
+
+```{r}
+our_slope <- 68 # replace "123" with whatever number you found for the slope in part D
+```
+
+Then, using the `infer` package run the following simulation:
+
+```{r}
+# save our simulations as an object (I called it "sims")
+sims <- mlbattend %>% # "data" here is whatever you named your dataframe!
+  specify(runs_scored ~ attend_mil) %>% # replacing y and x with your variable names
+  hypothesize(null = "independence") %>% # H_0 is that slope is 0, x and y are independent
+  generate(reps = 1000,
+           type = "permute") %>% # make 1000 samples assuming H_0 is true
+  calculate(stat = "slope") # estimate slope in each sample
+
+# look at it
+sims
+
+# calculate p value
+sims %>%
+  get_p_value(obs_stat = our_slope,
+              direction = "both") # a two-sided H_a: slope =/= 0
+```
+
+Compare to the p-value in your original regression output in previous parts of this question.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Our p value from the original regression and the one that we found here are the same.
+
+```{r}
+# write your code here
+```
+
+### Part N
+
+Make a histogram of the simulated slopes, and plot our sample slope on that histogram, shading the p-value.
+
+You can pipe `sims` into `visualize(obs_stat = our_slope)`, or use `ggplot2` to plot a histogram in the normal way, using `sims` as the data source and add a `geom_vline(xintercept = our_slope)` to show our finding on the distribution.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here
+ggplot(data = sims)+
+  aes(x=stat)+
+  geom_histogram()+
+  geom_vline(xintercept = our_slope)
+```
+
+# Knit and Submit!
+
+When you are done, click the **Render** button. Based on the current `yaml` header `format: html`, this will currently produce an html webpage, which should automatically open for your review.
+
+Notice in the **Files** pane in R Studio (by default, the lower right one), there should now be a document called `03-problem-set.html` (or if you changed the filename) ending in `.html`. This is the webpage, so you can find this file on your computer (or download it from Rstudio.cloud with by clicking on the checkmark box in front of the file in the Files page and then going to `More -> Export...` to download the file to your computer) and send this file.
+
+If you want to make a PDF, install the package "tinytex" and run the following code to install a LaTeX distribution:
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| eval: false
+
+library(tinytex)
+install_tinytex()
+```
+
+Then delete the lines in the `yaml` header that say `format: html: self-contained: TRUE`, and add a simple line that says `format: pdf` . Clicking **Render** will now produce a PDF, show it, and save it as a new file in the Files pane.
+
+Either way, send me your output file, `html` or `pdf` (or, if you like, `word`) so long as it shows the input and output code of every chunk. I have set it by default to do this, with `echo: true` in the `yaml` header.
+
+Don't forget to add your name to the `author` part of the header!
