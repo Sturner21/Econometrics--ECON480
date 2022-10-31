@@ -1,0 +1,72 @@
+---
+title: "Final Outline"
+author: "Sam Turner"
+format: pdf
+editor: visual
+---
+
+# Outline
+
+```{r}
+library(tidyverse)
+library(Lahman)
+library(broom)
+library(modelsummary)
+```
+
+### Filter data frames for position players since 1985
+
+```{r}
+Batting <- Lahman::Batting
+Appearances <- Lahman::Appearances
+
+#DF of position players
+PositionAppearances <- Appearances %>% 
+  #Gross filter to find position players
+  #Arbitrarily selected 5 because that filtered out a lot of PO's who came in a couple times
+  filter(G_c >= 5 | G_1b >= 5 | G_2b >= 5 | G_3b >= 5 | G_ss >= 5 | G_lf >= 5 | G_cf >= 5 | G_rf >= 5 | G_of >= 5 | G_dh >= 5) %>%
+  arrange(desc(G_p))
+
+#Filter batting data by position players
+PositionBatting <- Batting %>% 
+  filter(playerID %in% PositionAppearances$playerID) %>% 
+  #Only grab players who played in or after 1985
+  filter(yearID >= 1985)
+```
+
+### Establish relationship between runs scored and wins
+
+```{r}
+Teams <- Lahman::Teams
+
+Teams1985 <- Teams %>% 
+  filter(yearID >=1985)
+
+Teams1985 %>% 
+  arrange(R)
+
+#2020 was Covid and only half season, which is why there is that very small pocket there
+ggplot(data = Teams1985)+
+  aes(x=R,
+      y=W,
+      color = yearID)+
+  geom_point()
+```
+
+### Find Linear Weights for Batting Outcomes by both team and player
+
+#### By team stats:
+
+```{r}
+Teams1985
+```
+
+#### By player stats:
+
+```{r}
+PositionBatting
+```
+
+### Check residuals to make sure we have good estimate
+
+### See if there is strong relationship between pay and offensive contrubutions
