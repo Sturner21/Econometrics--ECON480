@@ -12,6 +12,7 @@ library(tidyverse)
 library(broom)
 library(modelsummary)
 library(fixest)
+library(quantmod)
 ```
 
 # Load Datasets & Filter
