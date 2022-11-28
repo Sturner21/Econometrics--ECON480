@@ -78,3 +78,40 @@ feols(R ~ X1B + X2B + X3B + HR + OB + SB + SF | yearID + teamID, data = Teams198
 Salaries <- Lahman::Salaries
 Salaries
 ```
+
+```{r}
+getSymbols("CPIAUCSL", src='FRED')
+avg.cpi <- apply.yearly(CPIAUCSL, mean)
+cf <- avg.cpi/as.numeric(avg.cpi['2021'])
+dat <- merge(Salaries, cf, all=FALSE)
+newdat <- dat %>% 
+  mutate(INFadj = salary / CPIAUCSL)
+```
+
+```{r}
+avgSal <- Salaries %>% 
+  group_by(yearID) %>% 
+  summarize(avg_salary = mean(salary))
+
+avgSal$yearID <- ISOdate(avgSal$yearID, 12, 1)
+avgSal$yearID <- as.Date(avgSal$yearID)
+
+cf2 <- cf %>% 
+  fortify.zoo() %>% 
+  as.tibble()
+
+cf2 <- cf2 %>% 
+  rename(yearID = Index)
+
+avgSal <- inner_join(avgSal, cf2)
+
+avgSal <- avgSal %>% 
+  mutate(real_wage = avg_salary*CPIAUCSL)
+```
+
+```{r}
+ggplot(data = avgSal)+
+  aes(x=yearID,
+      y=real_wage)+
+  geom_count()
+```
