@@ -1,0 +1,626 @@
+---
+title: "Problem Set 4"
+author: "Sam Turner" # put your name here!
+date: "November 14, 2022" # due date
+format:
+  html: 
+    self-contained: true # so we don't need other files (like plot images) 
+editor: visual
+execute:
+  echo: true # show all input code in final document
+---
+
+```{r}
+#| label: load-packages
+#| warning: false
+#| message: false
+# load packages, they are all installed for you already (in the cloud only)
+library(tidyverse) # your friend and mine
+library(broom) # for tidy regression
+library(modelsummary) # for nice regression tables
+library(wooldridge) # for wooldridge data set
+library(car) # for vif command
+library(dagitty) # for working with DAGs
+library(ggdag) # for drawing DAGs
+```
+
+# Theory and Concepts
+
+## Question 1
+
+In your own words, explain the fundamental problem of causal inference.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The fundamental problem of causal inference is that we cannot observe what would happen both with and without the treatment on an observation. We will always not know the outcome of one condition for an observation.
+
+## Question 2
+
+In your own words, explain how properly conducting a randomized controlled trial helps to identify the causal effect of one variable on another.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+A randomized control trial (RCT) should allow a researcher to control for all variables other than what they're testing for. Because, by randomly assigning participants to either the control or treatment group one should be effectively make the only difference between the groups being tested, the treatment. If groups are selected randomly they should be equally representative of a population which reduces the possibility of another possibly systematic factor from influencing the results of the experiment.
+
+## Question 3
+
+In your own words, describe what omitted variable bias means. What are the two conditions for a variable to bias OLS estimates if omitted?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Omitted variable bias occurs because there are factor left out of the regression in the error term. Two conditions must be met for these factors to have OVB, which are,
+
+1.  The variable, call it $Z$, influences the variable we are trying to measure, the dependent variable $Y$
+2.  $Z$ is correlated with a regressior, which is one of the independent variables that we have included in the regression usually called $X$
+
+## Question 4
+
+In your own words, describe what multicollinearity means. What is the cause, and what are the consequences of multicollinearity? How can we measure multicollinearity and its effects? What happens if multicollinearity is *perfect*?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Multicollinearity occurs when a regressor in a multivariate is near perfect or perfectly correlated with another regressor the same regression. We can measure multicolinearity by running an auxiliary regression between independent variables that we suspect are multicolinear and see if they are highly or perfectly correlated. Perfect multicollinearity would ruin a regression since it would cause $VIF$ to be undefined and thus the variance of a variable would be ruined. Thus, if there is perfect multicoliniearity, one of the multicorrelated variables must be dropped.
+
+## Question 5
+
+Explain how we use Directed Acyclic Graphs (DAGs) to depict a causal model: what are the two criteria that must hold for identifying a causal effect of $X$ on $Y$? When should we control a variable, and when should we *not* control for a variable?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+DAG's can be used to demonstrate how different variables interact so that a researcher can determine what variables are needed to determine both causality and remove omitted variable bias. The two criteria that must be met for causaility to be determined are, 1. Event $A$ must precede event $B$ for $A$ to cause $B$, and 2. The two variables $A$ and $B$ must be correlated
+
+# Theory Problems
+
+For the following questions, please *show all work* and explain answers as necessary. You may lose points if you only write the correct answer. You may use `R` to *verify* your answers, but you are expected to reach the answers in this section "manually."
+
+## Question 6
+
+A pharmaceutical company is interested in estimating the impact of a new drug on cholesterol levels. They enroll 200 people in a clinical trial. People are randomly assigned the treatment group or into the control group. Half of the people are given the new drug and half the people are given a sugar pill with no active ingredient. To examine the impact of dosage on reductions in cholesterol levels, the authors of the study regress the following model:
+
+$$\text{cholesterol level}_i = \beta_0+\beta_1 \text{dosage level}_i + u_i$$
+
+For people in the control group, dosage level$_i=0$ and for people in the treatment group, dosage level$_i$ measures milligrams of the active ingredient. In this case, the authors find a large, negative, statistically significant estimate of $\hat{\beta_1}$. Is this an unbiased estimate of the impact of dosage on change in cholesterol level? Why or why not? Do you expect the estimate to overstate or understate the true relationship between dosage and cholesterol level?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+I don't believe that it is an unbiased estimation of dosage level on cholesterol level. If dosage level = 0 for the control group and was included in the regression, then this would mean that there would be half the data points sitting at x=0 on a scatterplot of cholesterol level versus dosage level. I think this would influence both $\beta_1$ and $\beta_0$. But I think this would overestimate $\beta_0$ and underestimate $\beta_1$.
+
+## Question 7
+
+Data were collected from a random sample of 220 home sales from a community in 2017.
+
+$$\widehat{Price}=119.2+0.485 \, BDR+23.4 \, Bath+0.156 \, Hsize+0.002 \, Lsize+0.090 \, Age$$
+
+| Variable | Description                   |
+|----------|-------------------------------|
+| $Price$  | selling price (in \$1,000s)   |
+| $BDR$    | number of bedrooms            |
+| $Bath$   | number of bathrooms           |
+| $Hsize$  | size of the house (in ft$^2)$ |
+| $Lsize$  | lot size (in ft$^2)$          |
+| $Age$    | age of the house (in years)   |
+
+### Part A
+
+Suppose that a homeowner converts part of an existing living space in her house to a new bathroom. What is the expected increase in the value of the house?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We would expect that to raise the price of the house by \$23,400.
+
+### Part B
+
+Suppose a homeowner adds a new bathroom to her house, which also increases the size of the house by 100 square feet. What is the expected increase in the value of the house?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We would expect this to raise the price of the house by \$156.
+
+### Part C
+
+Suppose the $R^2$ of this regression is 0.727. Calculate the adjusted $\bar{R}^2$.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\bar R^2 = 1-\frac{n-1}{n-k-1}*R^2=1-\frac{220-1}{220-5-1}*.727=.256014$
+
+### Part D
+
+Suppose the following auxiliary regression for $BDR$ has an $R^2$ of 0.841.
+
+$$\widehat{BDR}=\delta_0+\delta_1Bath+\delta_2Hsize+\delta_3Lsize+\delta_4Age$$
+
+Calculate the Variance Inflation Factor for $BDR$ and explain what it means.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$VIF = \frac{1}{1-R^2} = \frac{1}{1-.841} = \frac{1}{.159} = 6.28$
+
+This is a rather high $VIF$ this would mean that the variance of $BDR$ is rather large because $VIF$ is a determinant of the variance.
+
+## Question 8
+
+A researcher wants to investigate the effect of education on average hourly wages. Wage, education, and experience in the dataset have the following correlations:
+
+|            |   Wage | Education | Experience |
+|------------|-------:|----------:|-----------:|
+| Wage       | 1.0000 |           |            |
+| Education  | 0.4059 |    1.0000 |            |
+| Experience | 0.1129 |   -0.2995 |     1.0000 |
+
+She runs a simple regression first, and gets the results:
+
+$$\widehat{\text{Wage}} = -0.9049 +  0.5414 \, Education$$
+
+$$
+Y_i=\beta_{Omit, 0}+\beta_{Omit,1}X_{1i}+\epsilon_i
+$$
+
+She runs another regression, and gets the results:
+
+$$\widehat{\text{Experience}} = 35.4615 - 1.4681 \, Education$$
+
+$$
+X_{2i}=\delta_0+\delta_1X_{1i}+\tau_i
+$$
+
+### Part A
+
+If the true marginal effect of experience on wages (holding education constant) is 0.0701, calculate the omitted variable bias in the first regression caused by omitting experience. Does the estimate of $\hat{\beta_1}$ in the first regression overstate or understate the effect of education on wages?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+True regression equation:
+
+$$
+\widehat{Wage}=\beta_0+\beta_1Education+\beta_2Experience=\beta_0+\beta_1Education+0.0701Experience
+$$
+
+$$
+\beta_{Omit, 1} = \beta_1 + OVB= \beta_1 + \beta_2\delta_1
+$$
+
+Omitted Variable Bias: $OVB=\beta_2\delta_1=0.0701(-1.4681)=-0.102913$
+
+This would mean that the first regression underestimates the true relationship of experience on wages by about -.1
+
+### Part B
+
+Knowing this, what would be the *true effect* of education on wages, holding experience constant?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\beta_{Omit,1}=\beta_1+OVB
+$$
+
+$$
+0.5414 = \beta_1 -0.102913
+$$
+
+$$
+\beta_1 = .644313
+$$
+
+### Part C
+
+The $R^2$ for the second regression is 0.0897. If she were to run a better regression including both education and experience, how much would the variance of the coefficients on education and experience increase? Why?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+They would increase by $\frac{1}{1-R^2}=\frac{1}{1-.0897}=\frac{1}{.9103}=1.098539$ because that is the $VIF$, or Variance Inflation Factor for this level of $R^2$.
+
+# R Questions
+
+Answer the following questions using `R`. When necessary, please write answers in the same document (rendered to `html` or `pdf`, typed `.doc(x)`, or handwritten) as your answers to the above questions. Be sure to include (email or print an `.R` file, or show in your rendered quarto document) your code and the outputs of your code with the rest of your answers.
+
+## Question 9
+
+-   [`heightwages.csv`](http://metricsf22.classes.ryansafner.com/files/data/heightwages.csv)
+
+Download and read in `heightwages.csv` dataset. If you don't want to download/upload it, you can read it in directly from the url by running this chunk:
+
+```{r}
+# run or edit this chunk
+heightwages <- read_csv("http://metricsf22.classes.ryansafner.com/files/data/heightwages.csv")
+heightwages
+```
+
+This data is a part of a larger dataset from the National Longitudinal Survey of Youth (NLSY) 1979 cohort: a nationally representative sample of 12,686 men and women aged 14-22 years old when they were first surveyed in 1979. They were subsequently interviewed every year through 1994 and then every other year afterwards. There are many included variables, but for now we will just focus on:
+
+| Variable   | Description                                 |
+|------------|---------------------------------------------|
+| `wage96`   | Adult hourly wages (\$/hr) reported in 1996 |
+| `height85` | Adult height (inches) reported in 1985      |
+| `height81` | Adolescent height (inches) reported in 1981 |
+
+> We want to figure out what is the effect of height on wages (e.g. do taller people earn more on average than shorter people?)
+
+### Part A
+
+Create a quick scatterplot between `height85` (as $X)$ amd `wage96` (as $Y)$.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+ggplot(data = heightwages)+
+  aes(x=height85,
+      y=wage96)+
+  geom_point()
+```
+
+### Part B
+
+Regress wages on adult height. Write the equation of the estimated OLS regression. Interpret the coefficient on `height85`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\widehat{Wage}=-6.98+0.31Height$
+
+This would mean that for each additional inch of height, someone could expect to earn an additional \$0.31 per hour. And when someone is 0 inches tall they would make \$-6.98 per hour.
+
+```{r}
+# write your code here! 
+first_reg <- lm(data = heightwages, wage96 ~ height85)
+first_reg %>% 
+  summary()
+```
+
+### Part C
+
+How much would someone who is 5'10" (70 in) be predicted to earn per hour, according to the model?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Wage}=-6.98+0.31(70)=-6.98+21.7=14.72
+$$
+
+A 5'10" person would be predicted to make about \$14.72 an hour
+
+### Part D
+
+Would adolescent height cause an omitted variable bias if it were left out? Explain using both your intuition, and some statistical evidence with `R`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+I believe that adolescent height would lead to omitted variable bias if it were left out because adolescents will make less than their adult counterparts and be a little bit shorter on average.
+
+The correlation data confirms my suspicion since the correlation between all variables is not 0.
+
+```{r}
+# write your code here! 
+heightwages %>% 
+  select(wage96, height85, height81) %>% 
+  filter(!is.na(wage96) & !is.na(height85) & !is.na(height81)) %>% 
+  cor()
+```
+
+### Part E
+
+Now add adolescent height to the regression, and write the new regression equation below, as before. Interpret the coefficient on `height85`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Holding the height of adolescents constant, we now expect that for every height increase by one inch to decrease wage by \$0.10
+
+```{r}
+# write your code here! 
+second_reg <- lm(data = heightwages, wage96 ~ height85 + height81) 
+
+second_reg %>% 
+  summary()
+```
+
+### Part F
+
+How much would someone who is 5'10" in 1985 and 4'8" in 1981 be predicted to earn, according to the model?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$\widehat{Wage}=-0.1068Height85+0.4575Height81=-0.1068(70)+.4575(56)=-7.476+25.62=18.144$
+
+Our predicted wage is \$18.14
+
+### Part G
+
+What happened to the estimate on `height85` and its standard error?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Our estimate on height85 dropped drastically and its standard error rose considerably.
+
+### Part H
+
+Is there multicollinearity between `height85` and `height81`? Explore with a scatterplot. Hint: to avoid overplotting, use `geom_jitter()` instead of `geom_point()` to get a better view of the data.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+There does appear to be multicollinearlity.
+
+```{r}
+# write your code here! 
+ggplot(data = heightwages)+
+  aes(x=height85,
+      y=height81)+
+  geom_jitter()
+```
+
+### Part I
+
+Quantify how much multicollinearity affects the variance of the OLS estimates on both heights. Hint: You'll need the `vif` command from the `car` package.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+lm(data = heightwages, wage96 ~ height85 + height81) %>% 
+  vif()
+```
+
+### Part J
+
+Reach the same number as in part I by running an auxiliary regression.
+
+Hint: There's some missing `wage96` data that may give you a different answer, so take the data and `filter(!is.na(wage96))` before running this regression --- this will include only observations for `wage96` that are not `NA`'s.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+j_heightwage <- heightwages %>% 
+  filter(!is.na(wage96))
+
+aux_reg <- lm(data = j_heightwage, height81 ~ height85)
+aux_r_sqr <- glance(aux_reg) %>% 
+  pull(r.squared)
+
+our_vif <- 1 / (1-aux_r_sqr)
+our_vif
+```
+
+### Part K
+
+Make a regression table from part B and D using `modelsummary`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+modelsummary(list("Bivariate Model"=first_reg, "Multivariate Model"=second_reg))
+```
+
+## Question 10
+
+Install and load the `wooldridge` package. This package contains datasets used in Jeffrey Wooldridge's *Introductory Econometrics: A Modern Approach* (the textbook that I used in *my* econometrics classes years ago!).
+
+We will use the `bwght` data from `wooldridge`, which comes from The 1988 National Health Interview Survey., used in J. Mullahy (1997), "Instrumental-Variable Estimation of Count Data Models: Applications to Models of Cigarette Smoking Behavior," *Review of Economics and Statistics* 79: 596-593.
+
+Let's just look at the following variables:
+
+| Variable   | Description                                     |
+|------------|-------------------------------------------------|
+| `bwght`    | Birth Weight (ounces)                           |
+| `cigs`     | Cigarettes smoked per day while pregnant (1988) |
+| `motheduc` | Mother's education (number of years)            |
+| `cigprice` | Price of cigarette pack (1988)                  |
+| `faminc`   | Family's income in \$1,000s (1988)              |
+
+> We want to explore how a mother smoking during pregnancy affects the baby's birthweight (which may have strong effects on outcomes over the child's life).
+
+Just to be explicit about it, assign this as some dataframe (feel free to change the name), i.e.:
+
+```{r}
+# run or edit this chunk
+births <- bwght # feel free to rename whatever you want for the dataframe
+```
+
+### Part A
+
+Make a correlation table for our variables listed above.
+
+Hint: `select()` these variables and then pipe this into `cor(., use = "pairwise.complete.obs")` to use only observations for which there are data on each variable (to avoid `NA`'s).
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+births %>% 
+  select(bwght,cigs,motheduc,cigprice,faminc) %>% 
+  cor(., use="pairwise.complete.obs")
+```
+
+### Part B
+
+Consider the following causal model:
+
+```{r}
+#| echo: true
+dagify(bwght ~ cigs + inc,
+       cigs ~ price + educ + inc,
+       inc ~ educ,
+       exposure = "cigs",
+       outcome = "bwght") %>%
+  tidy_dagitty(seed = 256) %>%
+  ggdag_status()+
+  theme_dag_blank()+
+  theme(legend.position = "none")
+```
+
+Note what we are hypothesizing:
+
+1.  `bwght` is caused by `cigs` and `inc`
+2.  `cigs` are caused by `price`, `educ`, and `inc`
+3.  `inc` is caused by `educ`
+
+See also how this is written into the notation in R to draw (plot) the DAG.
+
+Create this model on [dagitty.net](htpp://dagitty.net). What does `dagitty` tell us the testable implications of this causal model?
+
+You can answer this using `dagitty.net,` and/or R.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+dagitty has the following testable implications:
+
+$$
+price\perp bwght|Cigs,inc
+$$
+
+$$
+price \perp inc
+$$
+
+$$
+price \perp edu
+$$
+
+$$
+bwght \perp educ|Cigs, inc
+$$
+
+### Part C
+
+Test each implication given to you by `dagitty.`
+
+-   For independencies, e.g. $(x \perp y)$: run a regression of $y$ on $x$.
+-   For *conditional* independencies, e.g. $(x \perp y | z, a)$: run a regression of $y$ on $x, z, a$.
+
+For each, test against the null hypothesis that the relevant coefficient $(\beta_1) =0$ (i.e. $x$ and $y$ are indeed independent).
+
+Does this causal model hold up well?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+I would say no because there are no $\beta_1$ coefficients that are statistically significant in my regressions. But I believe that this is due to my error and not something with the data.
+
+```{r}
+# write your code here! 
+models <- list(
+  "Price|Babyweight"=lm(data = births, cigprice ~ bwght+cigs+faminc),
+  "Price|Income"=lm(data = births, cigprice ~ faminc),
+  "Price|Education"=lm(data = births, cigprice ~ motheduc),
+  "Babyweight|Education"=lm(data = births, bwght ~ motheduc + cigprice + faminc)
+)
+
+modelsummary(models, statistic = c('std.error','p.value'))
+```
+
+### Part D
+
+List *all* of the possible pathways from `cigs` to `bwght`. Which are "front-doors" and which are "back-doors?" Are any blocked by colliders?
+
+You can answer this using `dagitty.net`, and/or R.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Front door: cigs $\rightarrow$ bwght
+
+Back door: cigs $\leftarrow$ inc $rightarrow$ bwght
+
+### Part E
+
+What is the minimal sufficient set of variables we need to control for in order to causally identify the effect of `cigs` on `bwght`?
+
+You can answer this using `dagitty.net,` and/or R.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+As long as we control for income, we should have a causal model.
+
+### Part F
+
+Estimate the causal effect by running the appropriate regression in `R`.
+
+FYI, on `dagitty.net`, you can change a variable on the diagram to be "*adjusted*" (controlled for) by clicking it and then hitting the `A` key.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+lm(data = births, bwght ~ cigs + faminc) %>% 
+  summary()
+```
+
+### Part G
+
+We saw some effect between `faminc` and `cigprice`. Perhaps there are unobserved factors (such as the economy's performance) that affect both. Add an unobserved factor `u1` to your `dagitty` model.
+
+FYI, on `dagitty.net`, you can make a variable be "*unobserved*" by double-clicking it and then hitting the `U` key.
+
+### Part H
+
+Perhaps our model is poorly specified. Maybe `motheduc` actually has a causal effect on `bwght`? Tweak your model on `dagitty.net` to add this potential relationship. What testable implications does this new model imply?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+If you make motheduc a exposure, like cigs, then it has no affect on the causality of our model. However, if you leave it then it is a confounding variable that needs to be controlled for.
+
+### Part I
+
+Test these implications appropriately in `R`, like you did in Part C. Does this model hold up well?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+This model does not hold up well. The coefficient for motheduc is not even close to statistical significance.
+
+```{r}
+# write your code here! 
+lm(data = births, bwght ~ cigs + faminc + motheduc) %>% 
+  summary()
+```
+
+### Part J
+
+Under this new causal model, list *all* of the possible pathways from `cigs` to `bwght`. Which are "front-doors" and which are "back-doors?" Are any blocked by colliders?
+
+You can answer this using `dagitty.net,` and/or R.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Front door: educ -\> cigs -\> bwght; cigs -\> bwght; u1 -\> inc -\> bwght; inc -\> bwght; price -\> cigs -\> bwght; u1 -\> price -\> cigs -\> bwght
+
+Back door: there are no backdoors that haven't been listed by the front doors
+
+### Part K
+
+Under this new causal model, what is the minimal sufficient set of variables we need to control in order to causally identify the effect of `cigs` on `bwght`?
+
+You can answer this using `dagitty.net,` and/or R.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We would only need to control for motheduc and inc
+
+### Part L
+
+Estimate the causal effect in this new model by running the appropriate regression in `R`. Compare your answers to those in part F.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+lm(data = births, bwght ~ cigs + faminc + motheduc) %>% 
+  summary()
+```
+
+### Part M
+
+Try out drawing this model using the `ggdag` package in R. See my DAG in question 3 for an example.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+dagify(bwght ~ cigs + inc + educ,
+       cigs ~ price + educ + inc,
+       inc ~ educ + u1,
+       price ~ u1,
+       exposure = "cigs",
+       outcome = "bwght") %>%
+  tidy_dagitty(seed = 256) %>%
+  ggdag_status()+
+  theme_dag_blank()+
+  theme(legend.position = "none")
+```

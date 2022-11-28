@@ -9,12 +9,25 @@ editor: visual
 
 ```{r}
 library(tidyverse)
+#install.packages("Lahman")
 library(Lahman)
 library(broom)
 library(modelsummary)
 ```
 
+### Jargon
+
+Here is a reference of definitions for terminology that non-baseball fans may find confusing:
+
+**Position Player** - A player who is not considered a pitcher. Such as a catcher, first baseman, etc. I will also consider DH (Designated Hitter) as a position player because they contribute to run production regularly throughout a season.
+
 ### Filter data frames for position players since 1985
+
+First step is to clean take the data set and gather the players we are interested in looking at. Pitchers are typically not expected to produce runs. Their job is to limit the runs that the other team scores. And because they're not expected to produce runs, they usually don't. Therefore it is important that we remove them from the data set because they will be outliers since they're ability to limit runs is being compensated and not their run production like position players.
+
+We will use the Appearances data set from the Lahman package to generate a list of players who can be considered position players. The best filter I could come up with was looking for player who had more than 5 appearances at any given position other than pitcher. 5 was an arbitrary cut-off, but it did a good job filtering out almost every pitcher. Using a value lower than 5, or just excluding for players whose pitching appearances were greater than 0 created a problem. Sometimes when a team is being beaten very badly, they will put position players in to pitch so that they don't have to waste pitchers on a game already lost. The same will happen with pitchers if there are too many injured position players, they will sometimes come in to play in the field. By setting the appearances to 5 I was able to eliminate pitchers who happened to play the field a couple times in a season but wouldn't be considered a position player.
+
+Another important step was filtering the data set that had batting data. As we discussed above, we wanted to make sure that no pitchers are considered since they have very low production. Then, the salary data I have goes from 1985-2016, so we want to look at data since 1985. I don't cut off the data at 2016 because in this section I want to set myself up to get the best estimates for how much run production each outcome actually has. There is an arguement for cutting off the data. I also decided to take out data from 2020 because it was less than a half season due to COVID. This created a lot of outliers for both player and team data so it was easier to just eliminate it from consideration. I also wanted to create a few more statistics in the data to help with finding values of unrecorded statistics. For example, singles are not recorded in but they are easy to calculate. All hits are calculated and if they are not singles then they are also recorded. So it's a simple subtraction problem. OB is not an official statistic in any baseball community. I created it simply to make estimation a little easier and avoid p-hacking. OB, which stands for "On Base" is simply a collection of recorded statistics where a player will reach base without having to put the ball in play. This includes BB (base on balls, also known as walks), HBP (hit by pitch), and IBB(Intentional base on balls, or intentional walks). These stats can still be attributed to player's ability which is why they are included.
 
 ```{r}
 Batting <- Lahman::Batting
@@ -31,42 +44,87 @@ PositionAppearances <- Appearances %>%
 PositionBatting <- Batting %>% 
   filter(playerID %in% PositionAppearances$playerID) %>% 
   #Only grab players who played in or after 1985
-  filter(yearID >= 1985)
+  #Omit 2020 because it creates 30 outliers with only 60 games played
+  filter(yearID >= 1985 & yearID != 2020) %>% 
+  #Isolate singles as X1B to keep naming convention
+  mutate(X1B = H - X2B - X3B - HR, .after = H) %>% 
+  #Introduce "catch-all" term for "free base"
+  mutate(OB = BB + HBP + IBB, .after = HBP)
 ```
 
 ### Establish relationship between runs scored and wins
+
+In this section I attempt to measure how many runs are needed to generate an extra win. I find that about 12-13 scored in a season are needed to get an extra win, on average. This was quite odd since in the sabrmetrics community it is widely considered that 9-10 runs scored in a season will produce another win, on average. I'm not sure I will end up using this stat but I wanted to calculate it in case I end up using it. All of the cleaning is pretty much the exact same as what was done above. In addition, I wanted to create a visualization of the data to see what it would look like and colored it by year to achieve the same effect of jitter without distorting the data.
 
 ```{r}
 Teams <- Lahman::Teams
 
 Teams1985 <- Teams %>% 
-  filter(yearID >=1985)
+  #Omit 2020 because it creates 30 outliers with only 60 games played
+  filter(yearID >= 1985 & yearID != 2020) %>% 
+  mutate(X1B = H - X2B - X3B - HR, .after = H) %>% 
+  mutate(OB = BB + HBP, .after = HBP)
 
 Teams1985 %>% 
   arrange(R)
 
-#2020 was Covid and only half season, which is why there is that very small pocket there
 ggplot(data = Teams1985)+
   aes(x=R,
       y=W,
       color = yearID)+
-  geom_point()
+  geom_point()+
+  geom_smooth(method = "lm", color = "red")
 ```
+
+```{r}
+RunsToWins <- lm(data = Teams1985, W ~ R)
+
+summary(RunsToWins)
+```
+
+We can round up and say that our equation is $\widehat{Wins}=22+.08Runs$. With some simple algebra we can solve to find approximately how many runs are needed to "create" an extra win.
 
 ### Find Linear Weights for Batting Outcomes by both team and player
 
-#### By team stats:
+Using a multivariate regression we can find how many runs are "created" from an action. This helps us to gauge how valuable an outcome is, and most would fit intuition. We can use this to create an equation that would estimate how many a player would generate for a team by using the weights from the equation multiplied by how many of each variable they have.
 
 ```{r}
-Teams1985
-```
-
-#### By player stats:
-
-```{r}
-PositionBatting
+TeamLW <- lm(data = Teams1985, R ~ X1B + X2B + X3B + HR + OB + SB + SF)
+summary(TeamLW)
 ```
 
 ### Check residuals to make sure we have good estimate
 
-### See if there is strong relationship between pay and offensive contrubutions
+\*NOTE TO SELF - Linear weights of runs scored by teams should not be compared to runs scored by players. 2 very different things.
+
+Here we make a function to easily calculate what a player's expected runs created should be (xRC).
+
+Then we mutate a new column in the dataframe for the xRC and check to see what the distribution looks like.
+
+```{r}
+RC <- function(X1B, X2B, X3B, HR, OB, SB, SF){
+  return(.33519*X1B + .52178*X2B + .94843*X3B + 1.38692*HR + .27580*OB + .13918*SB + 1.34387*SF)
+}
+```
+
+```{r}
+EstBatting <- PositionBatting %>% 
+  select(playerID, yearID, R:SF)
+
+#Create DF which uses linear weights to predict what a player would do with "average" luck
+EstBatting1 <- EstBatting %>% 
+  mutate(xRC =  RC(X1B = X1B, X2B = X2B, X3B = X3B, HR = HR, OB = OB, SB = SB, SF = SF), .after = R)
+
+EstBatting1 %>% 
+  summarize(meanxRC = mean(xRC))
+
+ggplot(data = EstBatting1)+
+  aes(x=xRC)+
+  geom_histogram()+
+  geom_vline(xintercept = 42.34329)
+
+EstBatting1 %>% 
+  arrange(desc(xRC))
+```
+
+### See if there is strong relationship between pay and offensive contributions

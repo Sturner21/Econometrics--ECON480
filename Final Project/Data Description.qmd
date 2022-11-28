@@ -1,0 +1,213 @@
+---
+title: "Data Description"
+author: "Sam Turner"
+date: "28 November 2022"
+format:
+  html: 
+    self-contained: true
+editor: visual
+execute:
+  echo: true
+---
+
+# Load Libraries
+
+```{r}
+library(Lahman)
+library(scales)
+library(tidyverse)
+```
+
+# Data Sets
+
+The main data base that I will be using is Sean Lahman's. This is a community collaboration with MLB to make a database of an incredible amount of data relating to MLB and the teams available to the public. This data set has over 32 individual sheets. However, only 3 of them are going to be useful to me so I will focus on those.
+
+## Team
+
+The team data set has both offensive and defensive statistics recorded from 1871 to 2021. This sheet records observations of outcomes for teams in a year relating to wins, losses, playoff performance, identifiers, and cumulative offensive and defensive performance. My analysis is only on the offensive outcomes for teams over the course of a season so I will only focus on those.
+
+Below is a glimpse at the data pertaining to offensive outcomes descending by year.
+
+Brief explanation of variables selected from data:
+
+-   yearID - Year observations were recorded. MLB seasons do not take place over a multiple years like NBA or NFL. Therefore, yearID can also be thought of as synonymous to season.
+
+-   teamID - 3 letter team identifier. This data base is relational, meaning that there is more information on this team located on data sheets outside of this one. Using this 3 letter reference you can connect that data on other sheets with this one without having one unwieldy sheet.
+
+-   W:L - "W" is wins observed in a given year. "L" is losses observed in a given year.
+
+-   R:SF - All these columns related to cumulative observations of this outcome for a team in a given year. For example, "R" is the number of runs a team scored in that season. "AB" is number of At Bats a team had in a season. So on an so forth for all other variables.
+
+```{r}
+Teams <- Lahman::Teams
+
+slctTeams <- Teams %>% 
+  select(yearID, teamID, W, L, R, AB, H, X2B, X3B, HR, BB, SO, SB, CS, HBP, SF)
+
+slctTeams %>% 
+  arrange(desc(yearID)) %>% 
+  glimpse()
+```
+
+There are not any graphs that would help to illustrate the statistics since ultimately this sheet will be used for estimating linear weights.
+
+## Batting
+
+One of the most important data sets for my project is the batting data set. This data set records offensive outcomes for individual MLB players from 1871 to 2021. It can be thought of as the breakdown of who is responsible for which offensive stats from the **Team** data set.
+
+However, not all stats mean the same thing for the team as they do for the player. For example, there is no RBI recorded for teams but they are recorded for players. There is no particular rule for why this is not recorded, other than it doesn't make much sense to record a team's RBI's since it would end up being the exact same in total as the R. (RBI stands for Runs Batted In, and is a way to tell how good a player is a hitting when there are base-runners). But for a player, RBI is important measure of their hitting abilities when they have teammates on base.
+
+Below is a glimpse of the data and a brief explanation of what some mean.
+
+-   playerID:teamID - Various identifying variables that can be used for references on other data sets. playerID is how you can identify how a singular player has done. yearID is the particular year. teamID is the particular team.
+
+-   G - Number of games that a player appeared in over the course of a season
+
+-   AB:GIDP - Observations of various outcomes from a player over the course of a season. For example, "AB" is the number of At Bats a player had in a particular season for that team. "R" is the number of runs they scored. So on and so forth for the rest of the variables.
+
+```{r}
+Batting <- Lahman::Batting
+
+slctBatting <- Batting %>% 
+  select(-stint, -lgID)
+
+slctBatting %>% 
+  arrange(desc(yearID)) %>% 
+  glimpse()
+```
+
+There are not many graphs of this data set that I think would help illustrate any patterns that are interesting to my analysis for batting statistics. But, there are some trends to help illustrate some changes that have occurred in baseball that I think will help for background, so I will include those.
+
+The first being that the scores of games are higher than when MLB started, but have started dying off as strikeout rates and home-run rates have increased.
+
+```{r}
+ggplot(data = Batting)+
+  aes(x=yearID,
+      y=R)+
+  geom_col(fill="steelblue")+
+  labs(title = "Total Runs from 1871 to 2021",
+       x="Year",
+       y="Runs")
+```
+
+```{r}
+grouped_Batting <- Batting %>% 
+  group_by(yearID) %>% 
+  summarize(total_HR = sum(HR),
+            total_SO = sum(SO))
+
+grouped_Batting %>% 
+  arrange(desc(yearID))
+```
+
+```{r}
+ggplot(data = grouped_Batting)+
+  aes(x=yearID,
+      y=total_HR)+
+  geom_col(fill="steelblue")+
+  labs(title = "Total HR's from 1871 to 2021",
+       x="Year",
+       y="HR's")
+```
+
+```{r}
+ggplot(data = grouped_Batting)+
+  aes(x=yearID,
+      y=total_SO)+
+  geom_col(fill="steelblue")+
+  labs(title = "Total SO's from 1871 to 2021",
+       x="Year",
+       y="SO's")
+```
+
+## Salaries
+
+Another important data sheet is the Salaries sheet. This sheet includes 5 variables, only 4 of which are of any interest. An important note is that the the data goes from 1985 to 2016. And the actual salaries recorded are not adjusted for inflation.
+
+Below is an explanation of each of the 4:
+
+-   yearID - Year, or season, that the observation took place
+
+-   teamID - 3 letter team identifier to use across other sheets in the database
+
+-   playerID - Player identifier for their salary
+
+-   salary - Unadjusted salaries for each player in a given year
+
+```{r}
+Salaries <- Lahman::Salaries
+
+Salaries$yearID <- as.factor(Salaries$yearID)
+
+slctSalaries <- Salaries %>% 
+  select(-lgID)
+
+slctSalaries %>% 
+  arrange(desc(yearID)) %>% 
+  glimpse()
+```
+
+Below is a look at total payroll in the MLB from 1985 to 2016.
+
+```{r}
+grouped_Salaries <- Salaries %>% 
+  group_by(yearID) %>% 
+  summarize(total_salary = sum(salary),
+            mean_salary = mean(salary))
+
+ggplot(data = grouped_Salaries)+
+  aes(x=yearID,
+      y=total_salary)+
+  geom_col(fill="steelblue")+
+  scale_y_continuous(labels = label_comma())+
+  scale_x_discrete(guide = guide_axis(angle=90))+
+  labs(x="Year",
+       y="Salary ($)",
+       title="MLB Total Payroll From 1985 to 2016")
+```
+
+Below there is a comparison of the average salary from 1985 to 2016.
+
+```{r}
+ggplot(data = grouped_Salaries)+
+  aes(x=yearID,
+      y=mean_salary,
+      group=1)+
+  geom_line()+
+  scale_y_continuous(labels = label_comma())+
+  scale_x_discrete(guide = guide_axis(angle=90))+
+  labs(x="Year",
+       y="Avg. Salary ($)",
+       title="Average Salaries From 1985 to 2016")
+```
+
+Below is an examination of salaries from 1985 to 2016 using geom_jitter to better see the points. In addition, the average salary line from above is included here to better put into context how average salary changed versus overall salaries. Color is also used to show difference from year to year.
+
+```{r}
+ggplot(data = Salaries)+
+  aes(x=yearID,
+      y=salary)+
+  geom_jitter(aes(color=yearID), width = 0.2)+
+  geom_line(data = grouped_Salaries,
+            aes(x=yearID, y=mean_salary), color="black", size=1, group=1)+
+  scale_y_continuous(labels = label_comma())+
+  scale_x_discrete(guide = guide_axis(angle=90))+
+  labs(x="Year",
+       y="Salary ($)",
+       title="Salaries From 1985 to 2016")+
+  theme(legend.position = "none")
+```
+
+To reinforce the graph from above again but this time in box and whisker form.
+
+```{r}
+ggplot(data = Salaries)+
+  aes(x=yearID,
+      y=salary)+
+  geom_boxplot(color="steelblue")+
+  scale_y_continuous(labels = label_comma())+
+  scale_x_discrete(guide = guide_axis(angle=90))+
+  labs(x="Year",
+       y="Salary ($)",
+       title="Salaries From 1985 to 2016")
+```

@@ -1,0 +1,744 @@
+---
+title: "Problem Set 5"
+author: "Sam Turner" # put your name here!
+date: "November 28, 2022" # due date
+format:
+  html: 
+    self-contained: true # so we don't need other files (like plot images) 
+editor: visual
+execute:
+  echo: true # show all input code in final document
+---
+
+```{r}
+#| label: load-packages
+#| warning: false
+#| message: false
+# load packages, they are all installed for you already (in the cloud only)
+library(tidyverse) # your friend and mine
+library(broom) # for tidy regression
+library(modelsummary) # for nice regression tables
+library(car) # for f-test
+```
+
+# Theory and Concepts
+
+## Question 1
+
+In your own words, describe what the "dummy variable trap" means. What precisely is the problem, and what is the standard way to prevent it?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The dummy variable trap comes from when you include all dummy variables in a multivariate regression. This causes multicolinearity to occur between all the dummy variables and breaks the regression. The best way to prevent this is to omit one of the states of the dummy variable. So if you have 4 dummy variables, only include 3 of them like with the example of region shown in class.
+
+## Question 2
+
+In your own words, describe what an interaction term is used for, and give an example. You can use any type of interaction to explain your answer.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+An interaction term is used for determining if an independent variable affects the dependent variable by different amounts depending on the state of some second independent variable. An example of this would be if experience affects wages differently by gender.
+
+## Question 3
+
+In your own words, describe when and why using logged variables can be useful.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Using logged variable and logged scales can be very useful when dealing with percent changes and elasticities. Using logs makes this easier because the difference in logs with some x value is very close to a change in percentage.
+
+## Question 4
+
+In your own words, describe when we would use an $F$-test, and give some example (null) hypotheses. Describe intuitively and specifically (no need for the formula) what exactly $F$ is trying to test for.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+We would use the F-statistic to test overall what the chances are that our model describes nothing that it is attempting to describe. The F-statistic uses the null hypothesis that all of the coefficients from a model are actually 0 and then gives the chances that we would see our results if null hypothesis were true.
+
+# Theory Problems
+
+For the following questions, please *show all work* and explain answers as necessary. You may lose points if you only write the correct answer. You may use `R` to *verify* your answers, but you are expected to reach the answers in this section "manually."
+
+## Question 5
+
+Suppose data on many countries' legal systems (Common Law or Civil Law) and their GDP per capita gives us the following summary statistics:
+
+| Legal System | Avg. GDP Growth Rate | Std. dev. | $n$   |
+|--------------|----------------------|-----------|-------|
+| Common Law   | $1.84$               | $3.55$    | $19$  |
+| Civil Law    | $4.97$               | $4.27$    | $141$ |
+| Difference   | $-3.13$              | $1.02$    | $-$   |
+
+### Part A
+
+Using the group means, write a regression equation for a regression of GDP Growth rate on Common Law. Define:
+
+$$\text{Common Law}_i = \begin{cases} 1 & \text{if country } i \text{ has common law} \\ 0 & \text{if country } i \text{ has civil law}\\ \end{cases}$$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Avg GDP Growth Rate} = 4.97 - 3.13Common Law
+$$
+
+### Part B
+
+How do we use the regression to find the average GDP Growth rate for common law countries? For civil law countries? For the difference?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+To find AVG GDP for common law countries, plug 1 into the X variable CommonLaw. To find AVG GDP for civil law countries, plug 0 into CommonLaw. The difference between them is predicted GDP for common law subtracted by predicted GDP for civil law.
+
+### Part C
+
+Looking at the coefficients, does there appear to be a statistically significant difference in average GDP Growth Rates between Civil and Common law countries?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+There does appear to be a difference that could be statistically significant but the sample size is quite small for common law countries which might cause a problem.
+
+### Part D
+
+Is the estimate on the difference likely to be unbiased? Why or why not?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+I believe that the coefficients are unbiased estimators, but I also think that there is probably some omitted variable bias in the regression.
+
+### Part E
+
+Now using the same table above, reconstruct the regression equation if instead of Common Law, we had used:
+
+$$\text{Civil Law}_i = \begin{cases} 1 & \text{if country } i \text{ has civil law} \\ 0 & \text{if country } i \text{ has common law}\\ \end{cases}$$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{AvgGDPGrowthRate} = 1.84 + 3.13Civil Law
+$$
+
+## Question 6
+
+Suppose a real estate agent collects data on houses that have sold in a particular neighborhood over the past year, with the following variables:
+
+| Variable     | Description                                                                                                                              |
+|--------------------------------|----------------------------------------|
+| $Price_h$    | price of house $h$ (in thousands of \$)                                                                                                  |
+| $Bedrooms_h$ | number of bedrooms in house $h$                                                                                                          |
+| $Baths_h$    | number of bathrooms in house $h$                                                                                                         |
+| $Pool_h$     | $\begin{cases} =1 & \text{if house } h \text{ has a pool} \\ =0 & \text{if house } h \text{ does not have a pool} \end{cases}$           |
+| $View_h$     | $\begin{cases} =1 & \text{if house } h \text{ has a nice view} \\ =0 & \text{if house } h \text{ does not have a nice view} \end{cases}$ |
+
+### Part A
+
+Suppose she estimates the following regression:
+
+$$\widehat{\text{Price}}_h=119.20+29.76 \, \text{Bedrooms}_h+24.09 \, \text{View}_h+14.06 \, (\text{Bedrooms}_h \times \text{View}_h)$$
+
+What does each coefficient mean?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The first coefficient is the price of a house if it had no bedrooms and not a nice view
+
+The second coefficient describes how much more we predict a house will sell for, for each additional bedroom a house has, holding all other variables constant
+
+The third coefficient describes how much more a house will sell for given that it has a nice view and holder all other variables constant
+
+The fourth coefficient describes how much more a house will sell for with its number of bedrooms given that it has a nice view, versus if it didn't have a nice view.
+
+### Part B
+
+Write out *two* separate regression equations, one for houses \_\**with* a nice view, and one for homes *without* a nice view. Explain each coefficient in each regression.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Price}_{h,NiceView}=143.29+43.82Bedrooms_h
+$$
+
+$$
+\widehat{Price}_{h,NotNiceView}=119.20+27.76Bedrooms_h
+$$
+
+### Part C
+
+Suppose she estimates the following regression:
+
+$$\widehat{\text{Price}}_h=189.20+42.40 \, \text{Pool}_h+12.10 \, \text{View}_h+12.09 \, (\text{Pool}_h \times \text{View}_h)$$
+
+What does each coefficient mean?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The predicted price of a home without pools or a nice view would be about 189.2
+
+Holding all else constant, each additional pool adds 42.4 to predicted home price
+
+Holding all else constant, having a nice view adds 12.1 to predicted home price
+
+The difference between having pools with a nice view versus pools without is 12.09 on home value
+
+### Part D
+
+Find the expected price for:
+
+-   a house with no pool and no view
+-   a house with no pool and a view
+-   a house with a pool and without a view
+-   a house with a pool and with a view
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Price}_{NoPool,NoView}=189.2
+$$
+
+$$
+\widehat{Price}_{NoPool,View}=189.2+12.1(1)=201.3
+$$
+
+$$
+\widehat{Price}_{Pool,NoView}=189.2+42.4(1)=231.8
+$$
+
+$$
+\widehat{Price}_{Pool,View}=189.2+42.4(1)+12.1(1)+12.09(1*1)=255.79
+$$
+
+### Part E
+
+Suppose she estimates the following regression:
+
+$$\widehat{\text{Price}}_h=87.90+53.94 \, \text{Bedrooms}_h+15.29 \, \text{Baths}_h+16.19 \, (\text{Bedrooms}_h \times \text{Baths}_h)$$ What is the marginal effect of adding an additional *bedroom* if the house has 1 bathroom? 2 bathrooms? 3 bathrooms?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Price}_{h,1BR}=87.9+53.94(1)+15.29(1)+16.19(1*1)=173.32
+$$
+
+$$
+\widehat{Price}_{h,2BR}=87.9+53.94(1)+15.29(2)+16.19(1*2)=204.8
+$$
+
+$$
+\widehat{Price}_{h,3BR}=87.9+53.94(1)+15.29(3)+16.19(1*3)=236.28
+$$
+
+The difference between the predicted prices shows that including one extra bathroom increases the price by 31.48. This can also be obtained by adding the coefficients from $Baths$ and the interaction effect.
+
+### Part F
+
+Using the regression from Part E, what is the marginal effect of adding an additional *bathroom* if the house has 1 bedroom? 2 bedrooms? 3 bedrooms?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+By adding the coefficients of $Bedrooms_h$ and the interaction term, we know that the marginal effect must be an increase in price of 70.13. Proved above.
+
+## Question 7
+
+Suppose we want to examine the change in average global temperature over time. We have data on the deviation in temperature from pre-industrial times (in Celcius), and the year.
+
+### Part A
+
+Suppose we estimate the following simple model relating deviation in temperature to year:
+
+$$\widehat{\text{Temperature}}_i=-10.46+0.006 \, \text{Year}_i$$ Interpret the coefficient on Year (i.e. $\hat{\beta_1})$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+For every increase in the year, the temperature will increase 0.006 degrees Celcius.
+
+### Part B
+
+Predict the (deviation in) temperature for the year 1900 and for the year 2000.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Temperature}_{1900}=-10.46+0.006*1900=0.94
+$$
+
+$$
+\widehat{Temperature}_{2000}=-10.46+0.006*2000=1.54
+$$
+
+The temperature will increase by .6 from 1900 to 2000
+
+### Part C
+
+Suppose we believe temperature deviations are increasing at an increasing rate, and introduce a quadratic term and estimate the following regression model:
+
+$$\widehat{\text{Temperature (dev)}}_i=155.68-0.116 \, \text{Year}_i+0.000044 \, \text{Year}_i^2$$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+### Part D
+
+Our quadratic function is a $U$-shape. According to the model, at what year was temperature (deviation) at its minimum?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+0=-0.116+0.000044Year \rightarrow 0.116=0.000088Year \rightarrow 1384=Year
+$$
+
+## Question 8
+
+Suppose we want to examine the effect of cell phone use while driving on traffic fatalities. While we cannot measure the amount of cell phone activity while driving, we do have a good proxy variable, the number of cell phone subscriptions (in 1000s) in a state, along with traffic fatalities in that state.
+
+### Part A
+
+Suppose we estimate the following simple regression:
+
+$$\widehat{\text{fatalities}}_i=123.98+0.091\, \text{cell plans}_i$$ Interpret the coefficient on cell plans (i.e. $\hat{\beta_1})$.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Estimation of how many more traffic fatalities occur when a state has an additional (1000) cellphone plan
+
+### Part B
+
+Now suppose we estimate the regression using a linear-log model:
+
+$$\widehat{\text{fatalities}}_i=-3557.08+515.81\, \text{ln(cell plans}_i)$$ Interpret the coefficient on ln(cell plans) (i.e. $\hat{\beta_1})$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+How much a 1% change in cell phone plans affects predicted driving fatalities
+
+### Part C
+
+Now suppose we estimate the regression using a log-linear model:
+
+$$\widehat{\text{ln(fatalities})}_i=5.43+0.0001\,\text{cell plans}_i$$ Interpret the coefficient on cell plans (i.e. $\hat{\beta_1})$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+A 1 unit change in cell phone plans will lead to a $\beta_1 \times 100$% change in predicted fatalities. Which for here is a .0001% change in fatalities
+
+### Part D
+
+Now suppose we estimate the regression using a log-log model:
+
+$$\widehat{\text{ln(fatalities})}_i=-0.89+0.85\,\text{ln(cell plans})_i$$ Interpret the coefficient on cell plans (i.e. $\hat{\beta_1})$
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+1% change in cell phone plans leads to a .85% change in fatalities
+
+### Part E
+
+Suppose we include several other variables into our regression and want to determine which variable(s) have the largest effects, a State's cell plans, population, or amount of miles driven. Suppose we decide to *standardize* the data to compare units, and we get:
+
+$$\widehat{\text{fatalities}}_Z=0+0.002 \, \text{cell plans}_{Z}-0.00007\,\text{population}_{Z}+0.019\,\text{miles driven}_{Z}$$ Interpret the coefficients on cell plans, population, and miles driven. Which has the largest effect on fatalities?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+A 1 standard deviation change in cell phone plans leads to a .002 standard deviation change in predicted fatalities holding all else constant
+
+A 1 standard deviation change in population leads to a -0.00007 standard deviation change in predicted fatalities holding all else constant
+
+A 1 standard deviation change in miles driven leads to a 0.019 standard deviation change in preditcted fatalities holding all else constant
+
+### Part F
+
+Suppose we wanted to make the claim that it is *only* miles driven, and neither population nor cell phones determine traffic fatalities. Write (i) the null hypothesis for this claim and (ii) the estimated restricted regression equation.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+i\) $H_0:\beta_1=\beta_2=0$
+
+ii\) $\widehat{fatalities}_Z=0.019miles driven_Z$
+
+### Part G
+
+Suppose the $R^2$ on the original regression from Part E was 0.9221, and the $R^2$ from the restricted regression is 0.9062. With 50 observations, calculate the $F$-statistic.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\frac{\frac{R^2_U-R^2_r}{q}}{\frac{1-R^2_U}{n-k-1}}=\frac{\frac{0.9221-0.9062}{2}}{\frac{1-0.9221}{50-3-1}}=\frac{.00795}{.001693478}=4.69
+$$
+
+# R Questions
+
+Answer the following questions using `R`. When necessary, please write answers in the same document (rendered to `html` or `pdf`, typed `.doc(x)`, or handwritten) as your answers to the above questions. Be sure to include (email or print an `.R` file, or show in your rendered quarto document) your code and the outputs of your code with the rest of your answers.
+
+## Question 9
+
+-   [`LeadMortality`](http://metricsf22.classes.ryansafner.com/files/data/LeadMortality.csv)
+
+Download and read in `LeadMortality.csv` dataset. If you don't want to download/upload it, you can read it in directly from the url by running this chunk:
+
+```{r}
+# run or edit this chunk
+lead <- read_csv("http://metricsf22.classes.ryansafner.com/files/data/LeadMortality.csv")
+```
+
+Lead is toxic, particularly for young children, and for this reason government regulations severely restrict the amount of lead in our environment. In the early part of the 20^th^ century, the underground water pipes in many U.S. cities contained lead, and lead from these pipes leached into drinking water. This exercise will have you investigate the effect of these lead pipes on infant mortality. This dataset contains data on:
+
+| Variable  | Description                                                        |
+|--------------------------------|----------------------------------------|
+| `infrate` | infant mortality rate (deaths per 100 in population)               |
+| `lead`    | $=1$ if city has lead water pipes, $=0$ if did not have lead pipes |
+| `pH`      | water pH                                                           |
+
+and several demographic variables for 172 U.S. cities in 1900.
+
+### Part A
+
+Using `R` to examine the data, find the average infant mortality rate for cities *with* lead pipes and for cities *without* lead pipes. Then, calculate the difference in mortality rates, and run a $t$-test to determine if this difference is statistically significant.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+There is not a
+
+```{r}
+# write your in this chunk
+lead %>%
+  filter(lead == 0) %>% 
+  summarize(WithoutLead = mean(infrate))
+
+lead %>%
+  filter(lead == 1) %>% 
+  summarize(Lead = mean(infrate))
+
+t.test(infrate~lead, data = lead)
+```
+
+### Part B
+
+Run a regression of `infrate` on `lead`, and write down the estimated regression equation. Use the regression coefficients to find:
+
+-   the average infant mortality rate for cities with lead pipes
+-   the average infant mortality rate for cities without lead pipes
+-   the difference between the averages for cities with or without lead pipes
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{InfantMortalityRate}=.38117+0.02209Lead
+$$
+
+Average infant mortality rate for cities with lead pipes: $.38117+.02209=.4032576$
+
+Average infant mortality rate for cities without lead pipes = $.38117$
+
+Difference in averages = $.02209$
+
+```{r}
+# write your code in this chunk 
+first <- lm(data = lead, infrate ~ lead) 
+first %>% 
+  summary()
+```
+
+### Part C
+
+Does the pH of the water matter? Include `ph` in your regression from part B. Write down the estimated regression equation, and interpret each coefficient. What happens to the estimate on `lead`?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{Infant Mortality Rate}=1.17817+.04993Lead-0.11143ph
+$$
+
+This means that the infant mortality rate with no lead and 0 ph is 118%. If the city uses lead pipes then the rate increases by 4.99%. And for every increase in ph, a city will decrease its mortality rate by 11.14%.
+
+The coefficient and statistical significance increase for lead when including ph.
+
+```{r}
+# write your code in this chunk
+second <- lm(data = lead, infrate ~ lead + ph) 
+second %>% 
+  summary()
+```
+
+### Part D
+
+The amount of lead leached from lead pipes normally depends on the chemistry of the water running through the pipes: the more acidic the water (lower pH), the more lead is leached. Create an interaction term between lead and pH, and run a regression of `infrate` on `lead`, `pH`, and your interaction term. Write down the estimated regression equation. Is this interaction effect significant?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{InfantMortalityRate}=0.9189+0.4618Lead-0.07518ph+-0.05686(Lead \times ph)
+$$
+
+The interaction effect is not significant to the .05 level.
+
+```{r}
+# write your code in this chunk
+third <- lm(data = lead, infrate ~ lead + ph + ph:lead)
+
+third %>% 
+  summary()
+```
+
+### Part E
+
+What we actually have now are two different regression lines. Visualize this with a scatterplot between `infrate` $(Y)$ and `ph` $(X)$, making your points and regression lines colored by `lead`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code in this chunk
+ggplot(data = lead, aes(x=ph, y=infrate, color=factor(lead)))+
+  geom_point()+
+  geom_smooth(method="lm")
+```
+
+### Part F
+
+Do the two regression lines have the same intercept? The same slope? Use the original regression in part D to test these possibilities.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+The regressions have both different slopes and intercepts as apparent by the graph.
+
+```{r}
+# write your code in this chunk
+
+```
+
+### Part G
+
+Take your regression equation from part D and rewrite it as two separate regression equations (one for no lead and one for lead). Interpret the coefficients for each.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+\widehat{InfantMortalityRate}_{NoLead}=.9189-0.07518ph
+$$
+
+$$
+\widehat{InfantMortalityRate}_{Lead}=1.3807-0.13204ph
+$$
+
+```{r}
+# write your code in this chunk
+
+```
+
+### Part H
+
+Double check your calculations in G are correct by running the regression in D twice, once for cities without lead pipes and once for cities with lead pipes. \[Hint: `filter()` the data first, then use the filtered data for the `data=` in each regression.\]
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+nolead <- lead %>% 
+  filter(lead==0)
+
+wlead <- lead %>% 
+  filter(lead==1)
+
+noleadreg <- lm(data = nolead, infrate ~ ph) 
+noleadreg %>% 
+  summary()
+
+wleadreg <- lm(data = wlead, infrate ~ ph) 
+wleadreg %>% 
+  summary()
+```
+
+### Part I
+
+Use `modelsummary` to make a nice output table of all of your regressions from parts B, C, and D.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code in this chunk
+models <- list(
+  "Part B" = first,
+  "Part C" = second,
+  "Part D" = third
+)
+modelsummary(models = models)
+```
+
+## Question 10
+
+-   [<i class="fas fa-table"></i> `freedom.csv`](http://metricsf22.classes.ryansafner.com/files/data/freedom.csv)
+
+Let's look at economic freedom and GDP per capita using some data I sourced from [Gapminder](https://gapminder.org/tools)[^1], [Freedom House](https://freedomhouse.org/content/freedom-world-data-and-resources)[^2] and [Fraser Institute Data](https://www.fraserinstitute.org/economic-freedom/dataset?geozone=world&year=2016&page=dataset)[^3] and cleaned up for you, with the following variables:
+
+[^1]: GDP per capita (2018)
+
+[^2]: Political freedom score (2018)
+
+[^3]: Economic Freedom score (2016)
+
+| Variable       | Description                                                            |
+|--------------------------------|----------------------------------------|
+| `Country`      | Name of country                                                        |
+| `ISO`          | Code of country (good for plotting)                                    |
+| `econ_freedom` | Economic Freedom Index score (2016) from 1 (least) to 10 (most free)   |
+| `pol_freedom`  | Political freedom index score (2018) from 1 (least) top 10 (most free) |
+| `gdp_pc`       | GDP per capita (2018 USD)                                              |
+| `continent`    | Continent of country                                                   |
+
+Download and read in `LeadMortality.csv` dataset. If you don't want to download/upload it, you can read it in directly from the url by running this chunk:
+
+```{r}
+# run or edit this chunk
+freedom <- read_csv("http://metricsf22.classes.ryansafner.com/files/data/freedom.csv")
+```
+
+### Part A
+
+Does economic freedom affect GDP per capita? Create a scatterplot of `gdp_pc` (`Y`) against `econ_freedom` (`x`). Does the effect appear to be linear or nonlinear?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Nonlinear
+
+```{r}
+# write your code in this chunk
+ggplot(data = freedom)+
+  aes(x=econ_freedom,
+      y=gdp_pc)+
+  geom_point()
+```
+
+### Part B
+
+Run a simple regression of `gdp_pc` on `econ_freedom`. Write out the estimated regression equation. What is the marginal effect of `econ_freedom` on `gdp_pc`?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+An increase in economic freedom by 1 leads to an increase in gdp per cap of 14704
+
+```{r}
+# write your code in this chunk
+betareg <- lm(data = freedom, gdp_pc ~ econ_freedom)
+
+betareg %>% 
+  summary()
+```
+
+### Part C
+
+Add the quadratic regression line to your scatterplot. This just requires a special formula inside an additional layer: `geom_smooth(method = "lm", formula = "y ~ x + I(x^2)")`.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+ggplot(data = freedom)+
+  aes(x=econ_freedom,
+      y=gdp_pc)+
+  geom_point()+
+  geom_smooth(method="lm", formula = "y ~ x + I(x^2)")
+```
+
+### Part D
+
+What is the marginal effect of `econ_freedom` on `gdp_pc`?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Marginal effect = -96618 + 16474econ_freedom (If using quadratic model)
+
+```{r}
+# write your code in this chunk 
+deltareg <- lm(data = freedom, gdp_pc ~ econ_freedom + I(econ_freedom^2))
+deltareg %>% 
+  summary()
+```
+
+### Part E
+
+As a quadratic model, this relationship should predict an`econ_freedom` score where `gdp_pc` is at a *minimum*. What is that minimum Economic Freedom score, and what is the associated GDP per capita?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+$$
+0=-96618+16474econFreedom \rightarrow 96618=16474econFreedom \rightarrow 5.864878=econFreedom
+$$
+
+### Part F
+
+Run a cubic model to see if we should keep going up in polynomials. Write out the estimated regression equation. Should we add a cubic term?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+Probably not since it makes all coefficients statistically insignificant
+
+```{r}
+# write your code here! 
+omegareg <- lm(data = freedom, gdp_pc ~ econ_freedom + I(econ_freedom^2) + I(econ_freedom^3))
+omegareg %>% 
+  summary()
+```
+
+### Part G
+
+Another way we can *test* for non-linearity is to run an $F$-test on all non-linear variables - i.e. the quadratic term and the cubic term $(\hat{\beta_2}$ and $\hat{\beta_3}$) and test against the null hypothesis that:
+
+$$H_0: \hat{\beta_2} = \hat{\beta_3} = 0$$
+
+Run this joint hypothesis test, and what can you conclude?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+That the coefficients are statistically significant
+
+```{r}
+# write your code here! 
+linearHypothesis(omegareg, c("I(econ_freedom^2)", "I(econ_freedom^3)"))
+```
+
+### Part H
+
+Instead of a polynomial model, try out a logarithmic model. It is hard to interpret percent changes on an index, but it is easy to understand percent changes in GDP per capita, so run a *log-linear* regression. Write out the estimated regression equation. What is the marginal effect of `econ_freedom`?
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+A 1 unit change in econ_freedom leads to a 1.3% change in gdp_pc
+
+```{r}
+# write your code here! 
+freedom <- freedom %>% 
+  mutate(loggdp_pc = log(gdp_pc))
+
+chireg <- lm(data = freedom, loggdp_pc ~ econ_freedom)
+chireg %>% 
+  summary()
+```
+
+### Part I
+
+Make a scatterplot of your log-linear model with a regression line.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+ggplot(data = freedom)+
+  aes(x = econ_freedom,
+      y = loggdp_pc)+ 
+  geom_point(color = "blue", alpha = 0.5)+
+  geom_smooth(method = "lm", color = "orange")
+```
+
+### Part J
+
+Put all of your results together in a regression output table with `modelsummary` from your answers in questions B, C, G, and H.
+
+<!--WRITE YOUR ANSWERS BELOW -->
+
+```{r}
+# write your code here! 
+greekmodels <- list(
+  "Part B" = betareg,
+  "Part D" = deltareg,
+  "Part F" = omegareg,
+  "Part H" = chireg
+)
+
+modelsummary(greekmodels)
+```
