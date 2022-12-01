@@ -1,5 +1,5 @@
 ---
-title: "Final Outline 2"
+title: "Doubles for Dollars"
 format: pdf
 editor: visual
 ---
@@ -33,7 +33,7 @@ PositionBatting <- Batting %>%
   filter(playerID %in% PositionAppearances$playerID) %>% 
   #Only grab players who played in or after 1985
   #Omit 2020 because it creates 30 outliers with only 60 games played
-  filter(yearID >= 1985 & yearID != 2020) %>% 
+  filter(yearID >= 1985 & yearID <= 2016) %>% 
   #Isolate singles as X1B to keep naming convention
   mutate(X1B = H - X2B - X3B - HR, .after = H) %>% 
   #Introduce "catch-all" term for "free base"
@@ -41,13 +41,10 @@ PositionBatting <- Batting %>%
 ```
 
 ```{r}
-PositionBatting$yearID <- as.factor(PositionBatting$yearID)
-PositionBatting
-```
-
-```{r}
-PositionAppearances$yearID <- as.factor(PositionAppearances$yearID)
-PositionAppearances
+PositionBatting$yearID <- ISOdate(PositionBatting$yearID, 12, 1)
+PositionBatting$yearID <- as.Date(PositionBatting$yearID)
+PositionBatting %>% 
+  glimpse()
 ```
 
 ```{r}
@@ -55,14 +52,27 @@ Teams <- Lahman::Teams
 
 Teams1985 <- Teams %>% 
   #Omit 2020 because it creates 30 outliers with only 60 games played
-  filter(yearID >= 1985 & yearID != 2020) %>% 
+  filter(yearID >= 1985 & yearID <= 2016) %>% 
   mutate(X1B = H - X2B - X3B - HR, .after = H) %>% 
   mutate(OB = BB + HBP, .after = HBP)
+
+#Put this after because ">=" no work with factor variables
+Teams1985$yearID <- as.factor(Teams1985$yearID)
 ```
 
 # Create Models
 
-Fixed Effects for Linear Weights
+## Fixed Effects for Linear Weights
+
+| Variable | Min                    | Q1                                     | Median                    | Q3                                     | Max                    | Mean                                     | SD                                     |
+|--------|----------------|--------|--------|--------|--------|--------|--------|
+| X1B      | `r min(Teams1985$X1B)` | `r quantile(Teams1985$X1B, probs=.25)` | `r median(Teams1985$X1B)` | `r quantile(Teams1985$X1B, probs=.75)` | `r max(Teams1985$X1B)` | `r round(mean(Teams1985$X1B), digits=2)` | `r round(sd(Teams1985$X1B), digits=2)` |
+|          |                        |                                        |                           |                                        |                        |                                          |                                        |
+|          |                        |                                        |                           |                                        |                        |                                          |                                        |
+|          |                        |                                        |                           |                                        |                        |                                          |                                        |
+|          |                        |                                        |                           |                                        |                        |                                          |                                        |
+|          |                        |                                        |                           |                                        |                        |                                          |                                        |
+|          |                        |                                        |                           |                                        |                        |                                          |                                        |
 
 ```{r}
 TeamLW <- lm(data = Teams1985, R ~ X1B + X2B + X3B + HR + OB + SB + SF + yearID + teamID)
@@ -71,6 +81,28 @@ summary(TeamLW)
 
 ```{r}
 feols(R ~ X1B + X2B + X3B + HR + OB + SB + SF | yearID + teamID, data = Teams1985)
+```
+
+## Formula
+
+Current formula:
+
+$$
+xRC=.47X1B+.72X2B+1.09X3B+1.43HR+.32OB+.17SB+.75SF
+$$
+
+```{r}
+exRC <- function(a, b, c, d, e, f, g){
+  return(.466818*a + .717882*b + 1.093846*c + 1.428731*d + .315669*e + .166770*f + .754662*g)
+}
+```
+
+## Find Player's xRC
+
+```{r}
+PositionBatting <- PositionBatting %>% 
+  mutate(xRC = exRC(X1B, X2B, X3B, HR, OB, SB, SF), .after = lgID) %>% 
+  select(playerID, yearID, teamID, xRC, R, X1B, X2B, X3B, HR, OB, SB, SF)
 ```
 
 # Salary
@@ -90,29 +122,38 @@ newdat <- dat %>%
 ```
 
 ```{r}
-avgSal <- Salaries %>% 
-  group_by(yearID) %>% 
-  summarize(avg_salary = mean(salary))
-
-avgSal$yearID <- ISOdate(avgSal$yearID, 12, 1)
-avgSal$yearID <- as.Date(avgSal$yearID)
+Salaries$yearID <- ISOdate(Salaries$yearID, 12, 1)
+Salaries$yearID <- as.Date(Salaries$yearID)
 
 cf2 <- cf %>% 
   fortify.zoo() %>% 
-  as.tibble()
-
-cf2 <- cf2 %>% 
+  as_tibble() %>% 
   rename(yearID = Index)
 
-avgSal <- inner_join(avgSal, cf2)
+Salaries <- inner_join(Salaries, cf2)
 
-avgSal <- avgSal %>% 
-  mutate(real_wage = avg_salary*CPIAUCSL)
+Salaries <- Salaries %>% 
+  mutate(real_salary = salary/CPIAUCSL, .after = salary)
+
+Salaries
+```
+
+# Salary and Runs Created
+
+```{r}
+df1 <- PositionBatting %>% 
+  select(playerID, xRC,yearID)
+
+df2 <- Salaries %>% 
+  select(playerID, real_salary,yearID)
+
+df3 <- inner_join(df2,df1, by=c("playerID", "yearID"))
 ```
 
 ```{r}
-ggplot(data = avgSal)+
-  aes(x=yearID,
-      y=real_wage)+
-  geom_count()
+ggplot(data=df3)+
+  aes(x=xRC,
+      y=real_salary)+
+  geom_point(aes(color=yearID))+
+  geom_smooth(method="lm")
 ```
