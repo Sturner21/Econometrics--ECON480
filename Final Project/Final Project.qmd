@@ -1,0 +1,55 @@
+---
+title: "Dollars for Doubles"
+subtitle: ""
+author: "Sam Turner"
+format: pdf
+editor: visual
+execute: 
+  echo: false
+  warning: false
+geometry: margin = 1in
+fontsize: 12pt
+mainfont: Times New Roman
+sansfont: Times New Roman
+linestretch: 2
+indent: true
+---
+
+```{r}
+#Load all libraries
+library(Lahman)
+library(tidyverse)
+library(broom)
+library(modelsummary)
+library(fixest)
+library(quantmod)
+library(scales)
+```
+
+# Introduction
+
+In 2019 Mike Trout set the MLB record for largest contract ever signed at \$426 million. But with the league minimum at \$700,000 in 2022, is it really fair to say that he performs at a level 609 times better than his "minimum wage counterparts? That is exactly the question this paper aims to address, to what extent is offensive performance, in the MLB, awarded in salary?
+
+This paper is of particular interest to owners and baseball operations personnel in the MLB but is also of interest to the general public. Often when building new stadiums or renovating a current one, a city will financially support their team making the taxpayer's part owners in the franchise. Therefore, the general public should have an interest in how their money is being spent by these teams, since the teams have enough money for blockbuster deals but not enough for the stadium they want.
+
+This paper uses a two-stage least-squares regression to first quantify a player's offensive performance in a given season. Then, the player's performance is compared to the real salary that they earned also in that season. The data used comes from the Sean Lahman relational MLB database. This database is free and available to the public. The data base has observations on a plethora of statistics either directly or indirectly related to the MLB and its teams. This includes data on offensive outcomes for both teams and players from 1871 to 2021. There is also salary information that spans from 1985 to 2016. The intersection of the three of these data sets has over 15,000 observations.
+
+Ultimately, this paper reaches the conclusion that there is a weak but positive relationship between offensive performance and real salary. This makes intuitive sense since offensive performance should be rewarded by the market, yet there are other factors that influence a player's salary. Defensive performance and fan opinion just to name a few. Further research to calculate the quantifiable aspects of a player's performance is needed to remove as much endogeneity and approach the true relationship of a player's performance to their salary.
+
+# Literature Review
+
+This paper is not the first to consider how player performance is rewarded in the MLB. After the 1974 labor strike in the MLB Gerald W. Scully published his article *Pay and Performance in Major League Baseball* where he considers a similar topic. His goal is slightly different, focusing on measuring the economic loss of players due to the reserve clause in all MLB player's contracts. However, in order to reach this conclusion he must first calculate player's marginal revenue and uses simplifying assumptions of ratios to represent offensive and defensive performance, instead of OLS estimators of runs like this paper. His conclusions are similar to this paper's in that he also concludes that offensive performance is a poor sole explanation variable for player salary. However, his model improves greatly when he accounts for defensive achievements meaning that follow up papers on this paper's topic are likely to greatly help this paper's explanatory power.
+
+More contemporary literature has, at best, come to mixed conclusions about the subject. Shahriar Hasan finds in *Can Money Buy Success ?: A Study of Team Payroll and Performance in the MLB,* there is strong and statistically significant evidence that a team's payroll effects their win percentage. His data went from 1995 to 2011. Yet, Stephen Hall found the opposite in his 2002 article, *Testing Causality Between Team Performance and Payroll: The Cases of Major League Baseball and English Soccer.* Hall finds that there is no causal link between payroll and team performance, measured in winning percentage. Interestingly, Hall does find correlation between payroll and performance. His data goes from 1980 to 2000. Finally, Jacob Andrew Loree takes the middle ground in his 2016 article, *Determinants of Baseball Success: An Econometrics Approach*. Loree finds that there is a statistically significant effect of salary on team success, measured by total runs and bases for a team in a season. However, Loree points out that the cost of buying these additional wins is too great for many small market teams to afford, making the effect basically nonexistent.
+
+Thus, with three vastly different approaches and conclusions to consider, this paper aims at attempting to help settle this debate by considering more contemporary data.
+
+# Theory/Model
+
+# Data Description
+
+# Empirical Model
+
+# Results/Implications
+
+# Bibliography

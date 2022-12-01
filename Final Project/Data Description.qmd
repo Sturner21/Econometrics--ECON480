@@ -155,6 +155,8 @@ grouped_Salaries <- Salaries %>%
   summarize(total_salary = sum(salary),
             mean_salary = mean(salary))
 
+grouped_Salaries
+
 ggplot(data = grouped_Salaries)+
   aes(x=yearID,
       y=total_salary)+

@@ -1,7 +1,9 @@
 ---
-title: "Doubles for Dollars"
+title: "Outline 2 - Doubles for Dollars"
 format: pdf
 editor: visual
+execute: 
+  warning: false
 ---
 
 # Load Libraries
@@ -13,6 +15,7 @@ library(broom)
 library(modelsummary)
 library(fixest)
 library(quantmod)
+library(scales)
 ```
 
 # Load Datasets & Filter
@@ -65,14 +68,14 @@ Teams1985$yearID <- as.factor(Teams1985$yearID)
 ## Fixed Effects for Linear Weights
 
 | Variable | Min                    | Q1                                     | Median                    | Q3                                     | Max                    | Mean                                     | SD                                     |
-|--------|----------------|--------|--------|--------|--------|--------|--------|
+|----------|------------------------|----------------------------------------|---------------------------|----------------------------------------|------------------------|------------------------------------------|----------------------------------------|
 | X1B      | `r min(Teams1985$X1B)` | `r quantile(Teams1985$X1B, probs=.25)` | `r median(Teams1985$X1B)` | `r quantile(Teams1985$X1B, probs=.75)` | `r max(Teams1985$X1B)` | `r round(mean(Teams1985$X1B), digits=2)` | `r round(sd(Teams1985$X1B), digits=2)` |
-|          |                        |                                        |                           |                                        |                        |                                          |                                        |
-|          |                        |                                        |                           |                                        |                        |                                          |                                        |
-|          |                        |                                        |                           |                                        |                        |                                          |                                        |
-|          |                        |                                        |                           |                                        |                        |                                          |                                        |
-|          |                        |                                        |                           |                                        |                        |                                          |                                        |
-|          |                        |                                        |                           |                                        |                        |                                          |                                        |
+| X2B      | `r min(Teams1985$X2B)` | `r quantile(Teams1985$X2B, probs=.25)` | `r median(Teams1985$X2B)` | `r quantile(Teams1985$X2B, probs=.75)` | `r max(Teams1985$X2B)` | `r round(mean(Teams1985$X2B), digits=2)` | `r round(sd(Teams1985$X2B), digits=2)` |
+| X3B      | `r min(Teams1985$X3B)` | `r quantile(Teams1985$X3B, probs=.25)` | `r median(Teams1985$X3B)` | `r quantile(Teams1985$X3B, probs=.75)` | `r max(Teams1985$X3B)` | `r round(mean(Teams1985$X3B), digits=2)` | `r round(sd(Teams1985$X3B), digits=2)` |
+| HR       | `r min(Teams1985$HR)`  | `r quantile(Teams1985$HR, probs=.25)`  | `r median(Teams1985$HR)`  | `r quantile(Teams1985$HR, probs=.75)`  | `r max(Teams1985$HR)`  | `r round(mean(Teams1985$HR), digits=2)`  | `r round(sd(Teams1985$HR), digits=2)`  |
+| OB       | `r min(Teams1985$OB)`  | `r quantile(Teams1985$OB, probs=.25)`  | `r median(Teams1985$OB)`  | `r quantile(Teams1985$OB, probs=.75)`  | `r max(Teams1985$OB)`  | `r round(mean(Teams1985$OB), digits=2)`  | `r round(sd(Teams1985$OB), digits=2)`  |
+| SB       | `r min(Teams1985$SB)`  | `r quantile(Teams1985$SB, probs=.25)`  | `r median(Teams1985$SB)`  | `r quantile(Teams1985$SB, probs=.75)`  | `r max(Teams1985$SB)`  | `r round(mean(Teams1985$SB), digits=2)`  | `r round(sd(Teams1985$SB), digits=2)`  |
+| SF       | `r min(Teams1985$SF)`  | `r quantile(Teams1985$SF, probs=.25)`  | `r median(Teams1985$SF)`  | `r quantile(Teams1985$SF, probs=.75)`  | `r max(Teams1985$SF)`  | `r round(mean(Teams1985$SF), digits=2)`  | `r round(sd(Teams1985$SF), digits=2)`  |
 
 ```{r}
 TeamLW <- lm(data = Teams1985, R ~ X1B + X2B + X3B + HR + OB + SB + SF + yearID + teamID)
@@ -109,7 +112,8 @@ PositionBatting <- PositionBatting %>%
 
 ```{r}
 Salaries <- Lahman::Salaries
-Salaries
+Salaries %>% 
+  glimpse()
 ```
 
 ```{r}
@@ -135,7 +139,8 @@ Salaries <- inner_join(Salaries, cf2)
 Salaries <- Salaries %>% 
   mutate(real_salary = salary/CPIAUCSL, .after = salary)
 
-Salaries
+Salaries %>% 
+  glimpse()
 ```
 
 # Salary and Runs Created
@@ -151,9 +156,18 @@ df3 <- inner_join(df2,df1, by=c("playerID", "yearID"))
 ```
 
 ```{r}
+lm(data = df3, real_salary ~ xRC) %>% 
+  summary()
+```
+
+```{r}
 ggplot(data=df3)+
   aes(x=xRC,
       y=real_salary)+
   geom_point(aes(color=yearID))+
-  geom_smooth(method="lm")
+  geom_smooth(method="lm")+
+  scale_y_continuous(labels = label_comma())+
+  labs(x="Expected Runs Created (xRC)",
+       y="Real Salary (2021, $)",
+       title="Real Salaries From 1985 to 2016")
 ```
