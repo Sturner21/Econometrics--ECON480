@@ -1,6 +1,6 @@
 ---
 title: "Dollars for Doubles"
-subtitle: ""
+subtitle: "An Econometric Analysis of MLB Salary On Offensive Performance"
 author: "Sam Turner"
 format: pdf
 editor: visual
@@ -44,9 +44,125 @@ More contemporary literature has, at best, come to mixed conclusions about the s
 
 Thus, with three vastly different approaches and conclusions to consider, this paper aims at attempting to help settle this debate by considering more contemporary data.
 
-# Theory/Model
+# Theory
+
+Using microeconomic intuition, we would expect to find that there should be a logarithmic relationship between salary and performance. This is due to the law of diminishing returns. We would expect players to earn more at an exponential rate when they perform above average. This is because there is competition between all teams, both large and small market, for players who are slightly above average. This large amount of competition will drive their wages up. This exponential curve will eventually start to level off once the salary level reaches the point that only a few of the largest market teams can afford the player. This decrease in competition is what will make the curve almost parallel to the x-axis at the greatest levels of performance.
+
+We should also expect that the salary and performance should have a high correlation. Competition between teams for players should allow for the true value of the player to be reached under the efficient market hypothesis. Teams also have access to all the same information as one another with respect to player performance on the field. Therefore, this transparency of information should lead to teams having similar valuation of player's and their abilities.
 
 # Data Description
+
+There are two data bases that were used for this analysis. The first, for all the baseball statistics and observations, is the Sean Lahman database. And the second is the CPI index from the Federal Reserve Bank.
+
+The Lahman database is extensive with over 30 datasets covering different aspects of the MLB from player performance to stadium details and more. It is a relational database meaning that every data set is related to another data set by a vector which has the same values for each observation. This feature is particularly helpful for this paper because it aims to use panel data of every player from 1985 to 2016 in an attempt to most accurately measure the player performance and salary. The main data sets that this paper uses are Salaries, Appearances, Teams, and Batting.
+
+```{r}
+Teams <- Lahman::Teams
+Batting <- Lahman::Batting
+Appearances <- Lahman::Appearances
+Salaries <- Lahman::Salaries
+```
+
+One of the few limitations of the Lahman database is that the Salaries data set only contains observations from 1985 to 2016. Therefore, this analysis will only use data observed from 1985 to 2016 across the other data sets. The salaries data set only has three variables of interest to this analysis, playerID and yearID to find a player's performance. And salary, which is the player's nominal salary in a given year.
+
+```{r}
+#Make all datasets only have observations from 1985 to 2016
+Teams1985 <- Teams %>% 
+  filter(yearID >= 1985 & yearID <= 2016)
+
+PositionAppearances <- Appearances %>% 
+  filter(yearID >= 1985 & yearID <= 2016)
+
+PositionBatting <- Appearances %>% 
+  filter(yearID >= 1985 & yearID <= 2016)
+```
+
+```{r}
+ggplot(data = Salaries)+
+  aes(x=as_factor(yearID),
+      y=salary)+
+  geom_boxplot(alpha=.4)+
+  scale_y_continuous(labels = label_comma())+
+  scale_x_discrete(guide = guide_axis(angle=45))+
+  labs(x="Year",
+       y="Salary ($)",
+       title="Nominal Salaries From 1985 to 2016")
+```
+
+The Appearances data set was only used for filtering by position players. In the National League (NL) pitchers are required to hit to continue pitching the next inning. Including them in the analysis will create outliers since they are being rewarded for their pitching performance and not offensive performance. Thus, to eliminate them a player must have at least 5 appearances in a position other than pitching to be considered for the analysis.
+
+```{r}
+#Filter Appearances to only include position players (not pitchers)
+PositionAppearances <- PositionAppearances %>% 
+  filter(G_c >= 5 | G_1b >= 5 | G_2b >= 5 | G_3b >= 5 | G_ss >= 5 | G_lf >= 5 | G_cf >= 5 | G_rf >= 5 | G_of >= 5 | G_dh >= 5)
+```
+
+The Teams data set includes almost 3000 observations on almost 50 variables. Since this paper is only on offensive performance, only a few are of interest. A couple variables must be calculated manually since they are not provided by the data set. These variables are OB, which is a statistic to cumulatively represent when a player reaches base without putting the ball in play. And X1B which is simply the total singles in a season, calculated by taking total hits and subtracting the count of every other hit outcome from that total.
+
+Work please
+
+<table style="width:100%;">
+<caption>Teams Data Set Variables</caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 79%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><p>Variable</p></th>
+<th><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>R</p></td>
+<td><p>Total runs scored by a team in a season</p></td>
+</tr>
+<tr class="even">
+<td><p>X1B</p></td>
+<td><p>Total singles hit in a season. Formula: <span class="math inline"><em>H</em> − <em>X</em>2<em>B</em> − <em>X</em>3<em>B</em> − <em>H</em><em>R</em></span></p></td>
+</tr>
+<tr class="odd">
+<td><p>X2B</p></td>
+<td><p>Total doubles hit in a season</p></td>
+</tr>
+<tr class="even">
+<td><p>X3B</p></td>
+<td><p>Total Triples hit in a season</p></td>
+</tr>
+<tr class="odd">
+<td><p>HR</p></td>
+<td><p>Total home runs hit in a season</p></td>
+</tr>
+<tr class="even">
+<td><p>OB</p></td>
+<td><p>Total hit by pitches, intentional and unintentional walks.</p>
+<p>Formula: <span class="math inline"><em>H</em><em>B</em><em>P</em> + <em>B</em><em>B</em> + <em>I</em><em>B</em><em>B</em></span></p></td>
+</tr>
+<tr class="odd">
+<td><p>SF</p></td>
+<td><p>Sacrifice flies hit in a season</p></td>
+</tr>
+</tbody>
+</table>
+
+: Teams Data Set Variables
+
+Work please
+
+| Variable | Min                  | Median | Mean | Max | Std. Dev. |
+|----------|----------------------|--------|------|-----|-----------|
+| R        | `r min(Teams1985$R)` |        |      |     |           |
+| X1B      |                      |        |      |     |           |
+| X2B      |                      |        |      |     |           |
+| X3B      |                      |        |      |     |           |
+| HR       |                      |        |      |     |           |
+| OB       |                      |        |      |     |           |
+| SF       |                      |        |      |     |           |
+
+: Teams Summary Statistics
+
+The Batting data set breaks down all of the offensive observations by player instead of by team as Teams did. This makes it almost identical to Teams other than it only considers offensive observations of players, hence the name Batting.
 
 # Empirical Model
 

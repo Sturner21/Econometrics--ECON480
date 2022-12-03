@@ -54,7 +54,6 @@ PositionBatting %>%
 Teams <- Lahman::Teams
 
 Teams1985 <- Teams %>% 
-  #Omit 2020 because it creates 30 outliers with only 60 games played
   filter(yearID >= 1985 & yearID <= 2016) %>% 
   mutate(X1B = H - X2B - X3B - HR, .after = H) %>% 
   mutate(OB = BB + HBP, .after = HBP)
