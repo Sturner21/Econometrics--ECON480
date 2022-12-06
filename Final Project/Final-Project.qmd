@@ -1,8 +1,12 @@
 ---
 title: "Dollars for Doubles"
+title-meta: "Dollars for Doubles"
 subtitle: "An Econometric Analysis of MLB Salary On Offensive Performance"
 date: "6 December 2022"
+date-meta: "6 December 2022"
 author: "Sam Turner"
+author-meta: "Sam Turner"
+bibliography: Final-Project-BIB.bib
 format: pdf
 editor: visual
 execute: 
@@ -17,6 +21,13 @@ indent: true
 ---
 
 ```{r}
+#Packages install
+#install.packages("Lahman")
+#install.packages("quantmod")
+#install.packages("scales")
+```
+
+```{r}
 #Load all libraries
 library(Lahman)
 library(tidyverse)
@@ -29,33 +40,29 @@ library(scales)
 
 # Introduction
 
-In 2019 Mike Trout set the MLB record for largest contract ever signed at \$426 million. But with the league minimum at \$700,000 in 2022, is it really fair to say that he performs at a level 609 times better than his "minimum wage counterparts? That is exactly the question this paper aims to address, to what extent is offensive performance, in the MLB, awarded in salary?
+In 2019 Mike Trout set Major League Baseball's (MLB) record for largest contract ever signed, at \$426 million over 12 years [@langs_2022_longest] or \$35,500,000 annually. But with the minimum league annual salary at \$700,000 in 2022, is it really fair to say that he performs at a level 50 times better than his "minimum wage" counterparts? That is exactly the question this paper aims to address. In the MLB, to what extent is offensive performance rewarded in salary?
 
-This paper is of particular interest to owners and baseball operations personnel in the MLB but is also of interest to the general public. Often when building new stadiums or renovating a current one, a city will financially support their team making the taxpayer's part owners in the franchise. Therefore, the general public should have an interest in how their money is being spent by these teams, since the teams have enough money for blockbuster deals but not enough for the stadium they want.
+This paper uses a two-stage least-squares regression to find offensive performance's relationship to salary. To quantify a player's offensive performance in a given season, a multivariate two way fixed effects ordinary least squares regression is run to quantify how each offensive outcome impacts a team's ability to score a run. Then, those outcomes are rated accordingly. Players are evaluated by how often they make those outcomes happen. Then, the player's performance is compared to the real salary that they earned in that season. The real salary is calculated by adjusting the salary the player earned in that year to its 2021 value. The data used comes from the Sean Lahman relational MLB database. This database is free and available to the public. The data base has observations on a plethora of statistics either directly or indirectly related to the MLB and its teams. This includes data on offensive outcomes for both teams and players from 1871 to 2021. There is also salary information that spans from 1985 to 2016. The intersection of the data sets containing information on teams, batting, and salaries has over 15,000 observations. And the data on inflation comes from the Federal Reserve.
 
-This paper uses a two-stage least-squares regression to first quantify a player's offensive performance in a given season. Then, the player's performance is compared to the real salary that they earned also in that season. The data used comes from the Sean Lahman relational MLB database. This database is free and available to the public. The data base has observations on a plethora of statistics either directly or indirectly related to the MLB and its teams. This includes data on offensive outcomes for both teams and players from 1871 to 2021. There is also salary information that spans from 1985 to 2016. The intersection of the three of these data sets has over 15,000 observations.
-
-Ultimately, this paper reaches the conclusion that there is a weak but positive relationship between offensive performance and real salary. This makes intuitive sense since offensive performance should be rewarded by the market, yet there are other factors that influence a player's salary. Defensive performance and fan opinion just to name a few. Further research to calculate the quantifiable aspects of a player's performance is needed to remove as much endogeneity and approach the true relationship of a player's performance to their salary.
+Ultimately, this paper reaches the conclusion that there is a weak but positive relationship between offensive performance and real salary. This makes intuitive sense since offensive performance should be rewarded by the market. Yet, there are other factors that influence a player's salary such as defensive performance and fan opinion just to name a few. Further research to calculate the quantifiable aspects of a player's performance is needed to remove as much endogeneity and approach the true relationship of a player's performance to their salary.
 
 # Literature Review
 
-This paper is not the first to consider how player performance is rewarded in the MLB. After the 1974 labor strike in the MLB Gerald W. Scully published his article *Pay and Performance in Major League Baseball* where he considers a similar topic. His goal is slightly different, focusing on measuring the economic loss of players due to the reserve clause in all MLB player's contracts. However, in order to reach this conclusion he must first calculate player's marginal revenue and uses simplifying assumptions of ratios to represent offensive and defensive performance, instead of OLS estimators of runs like this paper. His conclusions are similar to this paper's in that he also concludes that offensive performance is a poor sole explanation variable for player salary. However, his model improves greatly when he accounts for defensive achievements meaning that follow up papers on this paper's topic are likely to greatly help this paper's explanatory power.
+This paper is not the first to consider how player performance is rewarded in the MLB. After the 1974 labor strike in the MLB Gerald W. Scully published his article *Pay and Performance in Major League Baseball* [@scully_1974_pay] where he considers a similar topic. His goal was focusing on measuring the economic loss of players due to the reserve clause in player's contracts. However, in order to reach this conclusion he first needed to calculate player's marginal revenue. In his calculations he used simplifying assumptions of certain ratios to represent offensive and defensive performance, instead of an ordinary least squares (OLS) estimation of runs like this paper. His conclusions on offensive performance and pay are similar to this paper's in that he also concludes that offensive performance is a poor sole explanation variable for player salary. However, his model improves greatly when he accounts for defensive performance, giving hope for follow up research for this paper.
 
-More contemporary literature has, at best, come to mixed conclusions about the subject. Shahriar Hasan finds in *Can Money Buy Success ?: A Study of Team Payroll and Performance in the MLB,* there is strong and statistically significant evidence that a team's payroll effects their win percentage. His data went from 1995 to 2011. Yet, Stephen Hall found the opposite in his 2002 article, *Testing Causality Between Team Performance and Payroll: The Cases of Major League Baseball and English Soccer.* Hall finds that there is no causal link between payroll and team performance, measured in winning percentage. Interestingly, Hall does find correlation between payroll and performance. His data goes from 1980 to 2000. Finally, Jacob Andrew Loree takes the middle ground in his 2016 article, *Determinants of Baseball Success: An Econometrics Approach*. Loree finds that there is a statistically significant effect of salary on team success, measured by total runs and bases for a team in a season. However, Loree points out that the cost of buying these additional wins is too great for many small market teams to afford, making the effect basically nonexistent.
-
-Thus, with three vastly different approaches and conclusions to consider, this paper aims at attempting to help settle this debate by considering more contemporary data.
+More contemporary literature has, at best, come to mixed conclusions about the subject. Shahriar Hasan finds in *Can Money Buy Success ?: A Study of Team Payroll and Performance in the MLB* [@hasan_2011_can]*,* there is strong and statistically significant evidence that a team's payroll effects their win percentage. His data went from 1995 to 2011. Yet, Stephen Hall found the opposite in his 2002 article, *Testing Causality Between Team Performance and Payroll: The Cases of Major League Baseball and English Soccer* [@hall_2002_testing]*.* Hall finds that there is no causal link between payroll and team performance, measured in winning percentage. Interestingly, Hall does find correlation between payroll and performance. His data goes from 1980 to 2000. Finally, Jacob Andrew Loree takes the middle ground in his 2016 article, *Determinants of Baseball Success: An Econometrics Approach* [@loree_2016_determinants]. Loree finds that there is a statistically significant effect of salary on team success, measured by total runs and bases for a team in a season. However, Loree points out that the cost of buying these additional wins is too great for many small market teams to afford, making the effect basically nonexistent. Thus, with three vastly different approaches and conclusions to consider, this paper aims to help settle this debate by considering more contemporary data.
 
 # Theory
 
-Using microeconomic intuition, we would expect to find that there should be a logarithmic relationship between salary and performance. This is due to the law of diminishing returns. We would expect players to earn more at an exponential rate when they perform above average. This is because there is competition between all teams, both large and small market, for players who are slightly above average. This large amount of competition will drive their wages up. This exponential curve will eventually start to level off once the salary level reaches the point that only a few of the largest market teams can afford the player. This decrease in competition is what will make the curve almost parallel to the x-axis at the greatest levels of performance.
+Using microeconomic intuition, we would expect to find that there should be a quasi-exponential relationship between salary and performance. This is because extremely talented players earn economic rent. When dealing with players at or near the average, teams have a lot of bargaining power because average players are easily replaceable. Thus, if a player improves a little when they are around the average they will not see a large increase in their salary. However, teams lose this bargaining power when dealing with players who perform much higher than average because these players are not replaceable. These high performing players can demand salaries magnitudes higher than their average counterparts and teams will be forced to pay them because they would benefit from having that talent on their team. Incidentally, this explains why Mike Trout can justify his \$426 million contract.
 
-We should also expect that the salary and performance should have a high correlation. Competition between teams for players should allow for the true value of the player to be reached under the efficient market hypothesis. Teams also have access to all the same information as one another with respect to player performance on the field. Therefore, this transparency of information should lead to teams having similar valuation of player's and their abilities.
+For bargaining situations not dealing with extremely talented players, we should expect a player's true value to be reached through competition. Since most players perform around average and all teams can compete to sign an average player, this competition should result in players being fairly compensated for their performance. This should be a simple supply and demand problem trying to reach an equilibrium point.
 
 # Data Description
 
-There are two data bases that were used for this analysis. The first, for all the baseball statistics and observations, is the Sean Lahman database. And the second is the CPI index from the Federal Reserve Bank.
+There are two data bases used for this analysis. The first, for all the baseball statistics and observations, is the Sean Lahman database. And the second is the CPI index from the Federal Reserve.
 
-The Lahman database is extensive with over 30 datasets covering different aspects of the MLB from player performance to stadium details and more. It is a relational database meaning that every data set is related to another data set by a vector which has the same values for each observation. This feature is particularly helpful for this paper because it aims to use panel data of every player from 1985 to 2016 in an attempt to most accurately measure the player performance and salary. The main data sets that this paper uses are Salaries, Appearances, Teams, and Batting.
+The Lahman database is extensive with over 30 data sets covering different aspects of the MLB from player performance to stadium details and more. It is a relational database meaning that every data set is related to another data set by a vector which has the same values for each observation. This feature is particularly helpful for this paper because it aims to use panel data of every player and team from 1985 to 2016 in an attempt to most accurately measure the player performance and salary. The main data sets that this paper uses are Salaries, Appearances, Teams, and Batting.
 
 ```{r}
 Teams <- Lahman::Teams
@@ -64,7 +71,7 @@ Appearances <- Lahman::Appearances
 Salaries <- Lahman::Salaries
 ```
 
-One of the few limitations of the Lahman database is that the Salaries data set only contains observations from 1985 to 2016. Therefore, this analysis will only use data observed from 1985 to 2016 across the other data sets. The salaries data set only has three variables of interest to this analysis, playerID and yearID to find a player's performance. And salary, which is the player's nominal salary in a given year.
+One of the few limitations of the Lahman database is that the Salaries data set only contains observations from 1985 to 2016. Therefore, this analysis will only use data observed from 1985 to 2016 across the other data sets. The salaries data set only has three variables of interest to this analysis, "playerID" and "yearID" to find a player's performance. And "salary", which is the player's nominal salary in a given year.
 
 ```{r}
 #Make all datasets only have observations from 1985 to 2016
@@ -79,6 +86,8 @@ PositionBatting <- Batting %>%
 ```
 
 ```{r}
+#| label: fig-salaries
+#| fig-cap: "Nominal Salaries"
 ggplot(data = Salaries)+
   aes(x=as_factor(yearID),
       y=salary)+
@@ -90,7 +99,7 @@ ggplot(data = Salaries)+
        title="Nominal Salaries From 1985 to 2016")
 ```
 
-The Appearances data set was only used for filtering by position players. In the National League (NL) pitchers are required to hit to continue pitching the next inning. Including them in the analysis will create outliers since they are being rewarded for their pitching performance and not offensive performance. Thus, to eliminate them a player must have at least 5 appearances in a position other than pitching to be considered for the analysis.
+The Appearances data set was only used for filtering by position players. In the National League (NL) pitchers are required to hit to continue pitching the next inning. Including them in the analysis will create outliers since they are being rewarded for their pitching performance and not offensive performance. These high paid pitchers would cluster with high salaries and low offensive production. Thus, to eliminate them a player must have at least 5 appearances in a position other than pitching to be considered for the analysis.
 
 ```{r}
 #Filter Appearances to only include position players (not pitchers)
@@ -98,7 +107,7 @@ PositionAppearances <- PositionAppearances %>%
   filter(G_c >= 5 | G_1b >= 5 | G_2b >= 5 | G_3b >= 5 | G_ss >= 5 | G_lf >= 5 | G_cf >= 5 | G_rf >= 5 | G_of >= 5 | G_dh >= 5)
 ```
 
-The Teams data set includes almost 3000 observations on almost 50 variables. Since this paper is only on offensive performance, only a few are of interest. A couple variables must be calculated manually since they are not provided by the data set. These variables are OB, which is a statistic to cumulatively represent when a player reaches base without putting the ball in play. And X1B which is simply the total singles in a season, calculated by taking total hits and subtracting the count of every other hit outcome from that total.
+The Teams data set includes almost 3,000 observations on almost 50 variables. Since this paper is only on offensive performance, only a few variables are of interest and are described in [@tbl-def]. A couple variables must be calculated manually since they are not provided by the data set. These variables are OB, which is a statistic to cumulatively represent when a player reaches base without putting the ball in play. It is calculated by adding total observations of hit by pitches, walks, and intentional walks. And X1B which is simply the total singles in a season, calculated by taking total hits(H) and subtracting the count of doubles(X2B), triples(X3B), and home runs(HR).
 
 ```{r}
 #Create OB and X1B in datasets
@@ -117,17 +126,17 @@ Teams1985 <- Teams1985 %>%
   mutate(OB = BB + HBP, .after = HBP)
 ```
 
-| Variable | Description                                           |
-|----------|-------------------------------------------------------|
-| R        | Total runs scored by a team in a season               |
-| X1B      | Total singles hit by a team in a season               |
-| X2B      | Total doubles hit by a team in a season               |
-| X3B      | Total triples hit by a team in a season               |
-| HR       | Total home runs hit by a team in a season             |
-| OB       | Total times reached base without putting ball in play |
-| SF       | Total sacrifice flies hit by a team in a season       |
+| Variable | Description                                                                                                            |
+|----------|------------------------------------------------------------------------------------------------------------------------|
+| R        | Total runs scored by a team in a season                                                                                |
+| X1B      | Total singles hit by a team in a season                                                                                |
+| X2B      | Total doubles hit by a team in a season                                                                                |
+| X3B      | Total triples hit by a team in a season                                                                                |
+| HR       | Total home runs hit by a team in a season                                                                              |
+| OB       | Total times reached base without putting ball in play (Walks\[BB\] + Intentional Walks\[IBB\] + Hit By Pitches\[HBP\]) |
+| SF       | Total sacrifice flies hit by a team in a season                                                                        |
 
-: Teams Data Set Variables
+: Teams Data Set Variables {#tbl-def}
 
 | Variable | Min                    | Median                    | Mean                             | Max                    | Std. Dev.                      |
 |------------|------------|------------|------------|------------|------------|
@@ -139,9 +148,9 @@ Teams1985 <- Teams1985 %>%
 | OB       | `r min(Teams1985$OB)`  | `r median(Teams1985$OB)`  | `r round(mean(Teams1985$OB),2)`  | `r max(Teams1985$OB)`  | `r round(sd(Teams1985$OB),2)`  |
 | SF       | `r min(Teams1985$SF)`  | `r median(Teams1985$SF)`  | `r round(mean(Teams1985$SF),2)`  | `r max(Teams1985$SF)`  | `r round(sd(Teams1985$SF),2)`  |
 
-: Teams Summary Statistics
+: Teams Summary Statistics {#tbl-sum}
 
-The Batting data set breaks down all of the offensive observations by player instead of by team as Teams did. This makes it almost identical to Teams other than it only considering only offensive observations of players, hence the name Batting.
+The Batting data set breaks down all of the offensive observations by player instead of by team as Teams did. This makes it almost identical to Teams other than it only considers offensive observations of players, hence the name Batting.
 
 The only other data set used is the CPI index from the Federal Reserve Bank. This data set was accessed through the "quantmod" library. It describes change in CPI per month since 1947. However, since MLB salaries are only changed yearly at most, taking the mean CPI per year and using that as the CPI makes the most sense in this context.
 
@@ -153,19 +162,19 @@ $$
 xRC_{it}=\beta_0+\beta_1X1B_{it}+\beta_2X2B_{it}+\beta_3X3B_{it}+\beta_4HR_{it}+\beta_5OB_{it}+\beta_6SF_{it}+\alpha_i+\tau_t+\epsilon_{it}
 $$
 
-The first step to deriving $xRC$ is finding the weights that each offensive outcome has on a team's runs. All offensive outcomes are not created equal, which makes intuitive sense. A single only "creates" a run when there is a player on second or third. While a home run guarantees a run and has the possibility of "creating" up to three more runs depending on how many players were on base when the ball was hit. This difference in value towards creating runs is represented in the equation as the $\beta$ values.
+The first step to deriving $xRC$ is finding the weights that each offensive outcome has on a team's runs. All offensive outcomes are not created equal, which makes intuitive sense. A single (X1B) only "creates" a run when there is a player on second or third. While a home run (HR) guarantees a run will score and has the possibility of "creating" up to three more runs depending on how many players were on base when the ball was hit. This difference in value towards creating runs is represented in the equation as the different $\beta$ values. The $\epsilon$ in the equation is the error term from this multivariate regression and represents all other variables not included that influence $xRC$.
 
-A multivariate regression gives a decent estimate of the weights and removes some omitted variable bias from $xRC$ as opposed to only considering hits. However, it violates one of the four major assumptions of the ordinary least squares (OLS) regression. Which is that there is no autocorrelation across observations. Since players do not resign to a new team every year, there is definitely correlation across team's performance from year to year since a team's performance is ultimately its player's performance. This means that controlling across time is needed at the least. This is represented in the equation by the subscript $t$'s and the additional error term $\tau_t$. There are also many factors in each team, such as team chemistry or culture, which are correlated with player performance and thus correlated with team performance. Therefore, controlling for team is also very important to remove endogeneity. Controlling for team is represented by the subscript $i$'s and by the additional error term $\alpha_i$.
+A multivariate regression gives a decent estimate of the weights and removes some omitted variable bias from $xRC$ as opposed to only considering hits. However, only using the multivariate equation violates one of the four major assumptions of an OLS regression. Which is that there is no autocorrelation across observations. Since players do not re-sign to a new team every year, there is definitely correlation across team's performance from year to year since a team's performance is ultimately the culmination of its player's performance. This means that controlling for teams is needed. This is represented in the equation by the subscript $i$'s and the additional error term $\alpha_i$. There are also factors that affect all teams equally that change from year to year. This can be something as simple as a rule change. The MLB has had many rules changes over its lifetime, including since 1985 when the data this paper considers begins. Thus, there is a need to include a control for time. This is represented in the regression equation with the subscript $t$'s and the error term $\tau_t$.
 
-Calculating for $xRC$ is only the first step in determining if players are compensated for their offensive performance. The next step to answering the research question would be to run a bivariate OLS regression which can be represented by the following equation.
+Calculating for $xRC$ is only the first step in determining if players are compensated for their offensive performance. The next step to answering the research question would be to run a bivariate OLS regression to compare player performance and pay which can be represented by the following equation.
 
 $$
 RealSalary=\gamma_0+\gamma_1xRC+\nu
 $$
 
-In this equation $\gamma_0$ represents what would be expected of a player if they contributed no runs which should be league minimum salary. $\gamma_1$ would represent how much more money they could expect to earn for each additional run they produce. There is a lot of endogeneity in this $RealSalary$ regression especially from omitted variable bias. There are many measurable and unmeasurable variables left in the error term. For example, a measurable factor left in the error term would be defensive performance. Defense definitely plays a factor in a player's salary since a team might not have to score as many runs in a game if they have a solid defender to prevent runners from reaching base. An unmeasurable variable in the error term that is causing endogeneity would be public opinion of a player. Even if a player is quite skilled they may have to sign for less than their $xRC$ would estimate because of public outcry. Due to this endogeneity and omitted variable bias it is expected that there is a somewhat weak but positive relationship between $xRC$ and $RealSalary$.
+In this equation $\gamma_0$ represents what would be expected of a player if they contributed no runs, which should be league minimum salary. $\gamma_1$ would represent how much more money they could expect to earn for each additional run they produce. There is a lot of endogeneity in this $RealSalary$ regression especially from omitted variable bias. There are many measurable and unmeasurable variables left in the error term, $\nu$. For example, a measurable factor left in the error term would be defensive performance. Defense definitely plays a factor in a player's salary since a team might not have to score as many runs in a game if they have a solid defender to prevent runners from reaching base. Players who are good at offense also tend to be good at defense. Players often practice to two together which would make them correlated and satisfy the requirements for omitted variable bias and thus create endogeneity. An unmeasurable variable in the error term that is causing endogeneity would be public opinion of a player. Even if a player is quite skilled they may have to sign for less than their $xRC$ would estimate because of the negative public opinion for the team signing them. If public opinion is low for a player they will also probably be heckled by the fans which can lead to a performance drop reflected in $xRC$. This situation would also satisfy the requirements for omitted variable bias. Due to this endogeneity and omitted variable bias it is expected that there is a somewhat weak but positive relationship between $xRC$ and $RealSalary$.
 
-Thus, $RealSalary$ is not expected to be the final say on this question since it contains so much endogeneity. Rather, it aims merely at attempting to explain how much offensive contributions by players are rewarded in their salary. Further research should be conducted to estimate how defensive and pitching performance factor into player's salaries as well.
+The $RealSalary$ regression is not expected to be the final say on this question since it contains so much endogeneity. Rather, it aims merely at attempting to explain how much offensive contributions by players are rewarded in their salary. Further research should be conducted to estimate how defensive and pitching performance factor into player's salaries as well.
 
 # Results and Implications
 
@@ -244,9 +253,12 @@ df3 <- inner_join(df2,df1, by=c("playerID", "yearID"))
 
 #Run regression on real salary and xRC
 finalReg <- lm(data = df3, real_salary ~ xRC)
+finalReg2 <- lm(data = df3, real_salary ~ xRC + I(xRC**2))
 ```
 
 ```{r}
+#| label: tbl-xRCSum
+#| tbl-cap: "xRC Regressions Summary"
 modelsummary(models = list("Baseline" = basicReg,
                            "Multivariate" = multReg,
                            "Control Time" = multTimeReg,
@@ -261,52 +273,64 @@ modelsummary(models = list("Baseline" = basicReg,
                list("raw" = "rmse", "clean" = "SER", "fmt" = 2)
              ),
              escape = FALSE,
-             stars = c('*' = .1, '**' = .05, '***' = 0.01)
+             stars = c('*' = .1, '**' = .05, '***' = 0.01),
+             output = "latex"
              )
 ```
 
-Surprisingly, it can be hard to tell which model is best going only off of the outputs of the models. They are all tell a very similar story. However, using econometric intuition, the two way fixed effects model should be giving the most unbiased estimators of offensive outcomes because it controls for the most endogeneity. Therefore, we can substitute the $\beta$'s from before and get the following equation,
+Surprisingly, it can be hard to tell which model is best going only off of the outputs of the models in @tbl-xRCSum. They all tell a very similar story. However, using econometric intuition, the two way fixed effects model should be giving the most unbiased estimators of offensive outcomes because it controls for the most endogeneity. Therefore, we can use the weights from the two way fixed effects model and substitute them into the $\beta$'s from before and get the following equation,
 
 $$
 \widehat{xRC}=.47X1B + .69X2B + 1.22X3B + 1.41HR + .32OB + .85SF
 $$
 
-The coefficients in $xRC$ represent how many runs are created per outcome. As expected, the weight for home runs is both higher than the weight for singles and is greater than 1. All weights are very statistically significant and the adjusted R$^2$ is also quite high. $xRC$'s adjusted R$^2$ explains about 95% of the variation in runs scored which means that is should by a very good estimator for player's runs created.
+The coefficients in $xRC$ represent how many runs are created per outcome. As predicted, the weight for home runs is both higher than the weight for singles and is greater than 1. All weights are very statistically significant and the adjusted R$^2$ is also quite high. $xRC$ explains about 95% of the variation in runs scored which means that is should by a very good estimator for player's runs created.
 
 ```{r}
+#| label: fig-regs
+#| fig-cap: "Real Salaries Regressions"
 ggplot(data=df3)+
   aes(x=xRC,
       y=real_salary)+
   geom_point(aes(color=yearID), alpha = .6)+
   geom_smooth(method="lm", color="red")+
+  geom_smooth(method = "lm", formula = "y ~ x + I(x^2)", color = "green")+
   scale_y_continuous(labels = label_comma())+
   labs(x="Expected Runs Created (xRC)",
        y="Real Salary (2021, $)",
        title="Real Salaries Compared to xRC",
-       subtitle = "From 1985 to 2016")
+       subtitle = "From 1985 to 2016",
+       color = "Year")
 ```
 
 ```{r}
-modelsummary(models = list("Real Salary Reg" = finalReg),
+#| label: tbl-RealSalarySum
+#| tbl-cap: "RealSalary Regressions Summary"
+modelsummary(models = list("Real Salary Reg" = finalReg,
+                           "Real Salary Sqr. Reg" = finalReg2),
              fmt = 0,
-             coef_rename = c("(Intercept)" = "Intercept"),
+             coef_rename = c("(Intercept)" = "Intercept",
+                             "I(xRC^2)" = "xRC$^2$"),
              gof_map = list(
                list("raw" = "nobs", "clean" = "N", "fmt" = 0),
                list("raw" = "adj.r.squared", "clean" = "Adj. R$^2$", "fmt"=2),
                list("raw" = "rmse", "clean" = "SER", "fmt" = 2)
              ),
              escape = FALSE,
-             stars = c('*' = .1, '**' = .05, '***' = 0.01))
+             stars = c('*' = .1, '**' = .05, '***' = 0.01),
+             output = "latex")
 ```
 
-The model measuring Real Salary using $xRC$ as a predictor finds that for every one run increase in output, a player can expect to be compensated an extra \$40,000. In addition, the intercept of this bivariate regression makes intuitive sense too, since the minimum amount a player can make changed from 1985 to 2016 floated around \$500,000 to \$600,000 when adjusting for inflation. Substituting these values, into the $RealSalary$ equation, it becomes,
+The linear model (red line @fig-regs ) measuring Real Salary using $xRC$ as a predictor finds that for every one run increase in output, a player can expect to be compensated an extra \$40,000 (see @tbl-RealSalarySum). In addition, the intercept of this bivariate regression makes intuitive sense too, since the minimum amount a player can make from 1985 to 2016 was around \$500,000 to \$600,000 when adjusting for inflation. Substituting these values, into the $RealSalary$ equation, it becomes,
 
 $$
-\widehat{RealSalary}=(\$643803)+(\$39739)xRC
+\widehat{RealSalary}=(\$643,803)+(\$39,739)xRC
 $$
 
-While this model does find both $\gamma_0$ and $\gamma_1$ statistically significant, it should be obvious that these coefficients are not practically significant. The model can only use $xRC$ to describe about 15% of the variation of salary as it related to $xRC$. In addition, the standard error of the regression (SER) is about \$4,250,000. This means that this regression is about \$4 million off on average for each data point. As discussed before, this is likely due to endogeneity created from omitted variable bias. Finding a reliable way to measure defensive performance would greatly help this model since that is the other main contributor to salary. Due to all of this endogeneity, it is likely that the true effect of runs created on salary is likely lower than what is estimate.
+While this model does find both $\gamma_0$ and $\gamma_1$ statistically significant, it should be obvious that these coefficients are not practically significant. The model can only use $xRC$ to describe about 16% of the variation of salary as it related to $xRC$. In addition, the standard error of the regression (SER) is about \$4,250,000. This means that this regression line is about \$4 million off on average for each data point. As discussed before, this is likely due to endogeneity created from omitted variable bias. Finding a reliable way to measure defensive performance would greatly help this model since that is the other main contributor to salary. Due to all of this endogeneity, it is likely that the true effect of runs created on salary is lower than what is estimated.
 
-The fact that a model using runs created does not explain salary well is both a good and bad thing. It is bad because it means that owners are spending money for players who do not perform as well as they are being paid for. However, this can also be seen as a good thing because it means that there is opportunity for arbitrage. If some owners are willing to pay for players who are not worth their contracts, those owners need to let go of some other players who are a better deal to free up the cash. This provides opportunities for other clubs who have better analytics and information, to cheaply acquire real talent.
+The polynomial regression (green line @fig-regs ) also performed as poorly as the linear regression which is surprising since a polynomial model fit the theory of the problem better. This lack of fit is likely due to players in long and high paying contracts, not having the incentive to perform very well since they will get paid almost regardless of how they play. Since this model is more complicated and does not perform better than than the linear model, it should be discarded. It's inclusion was only to illustrate that sometimes theory can be plausible, but not necessarily correct.
+
+The fact that models using runs created do not explain salary well is both a good and bad thing. It is bad because it means that owners are spending money for players who do not perform as well as they are being paid for. However, this can also be seen as a good thing because it means that there is opportunity for arbitrage. If some owners are willing to pay for players who are not worth their contracts, those owners need to let go of some other players who are a better deal to free up the cash. This provides opportunities for other clubs who have better analytics and information, to cheaply acquire real talent and keep the MLB competitive regardless of payroll.
 
 # Bibliography
